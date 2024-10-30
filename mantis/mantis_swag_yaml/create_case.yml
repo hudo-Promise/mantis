@@ -1,0 +1,79 @@
+tags:
+  - MANTIS case相关接口
+summary:
+  - 创建 case
+description:
+  创建 case
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 创建 case
+      required:
+        - unique_identifier
+        - key
+      properties:
+        userid:
+          type: integer
+        category:
+          type: integer
+        function:
+          type: integer
+        sub_function:
+          type: integer
+        fuLi_id:
+          type: integer
+        level:
+          type: integer
+        cluster:
+          type: integer
+        available_platform:
+          type: array
+          example: []
+        available_carline:
+          type: array
+          example: []
+        available_variant:
+          type: array
+          example: []
+        available_market:
+          type: array
+          example: []
+        available_language:
+          type: array
+          example: []
+        available_environment:
+          type: array
+          example: []
+        title:
+          type: string
+        precondition:
+          type: string
+        action:
+          type: string
+        expectation:
+          type: string
+        reference_spec:
+          type: string
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }
+  10007:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10007,
+          msg: The key is incorrect,
+        }

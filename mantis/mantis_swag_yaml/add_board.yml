@@ -1,0 +1,91 @@
+tags:
+  - MANTIS 看板相关接口
+summary:
+  - 添加看板
+description:
+    添加看板
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 添加看板
+      properties:
+        user_id:
+          type: integer
+        name:
+          type: string
+          description: 看板名称
+        desc:
+          type: string
+          description: 看板描述
+        cluster:
+          type: integer
+          description: 集群 43 44 45
+        visibility_level:
+          type: integer
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }
+  10004:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10004,
+          msg: Cannot be empty,
+        }
+  10005:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10005,
+          msg: Cluster selection error,
+        }
+  10006:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10006,
+          msg: board status selection error,
+        }
+  10007:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10007,
+          msg: The key is incorrect,
+        }
+  10008:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10008,
+          msg: Submission failed,
+        }
+  10009:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10009,
+          msg: board does not exist,
+        }

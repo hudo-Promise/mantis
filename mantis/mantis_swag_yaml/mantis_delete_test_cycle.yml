@@ -1,0 +1,25 @@
+tags:
+  - MANTIS Test Cycle 相关接口
+summary:
+  - 删除 Test Cycle
+description:
+    删除 Test Cycle
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 删除 Test Cycle
+      properties:
+        id:
+          type: integer
+          example: 1
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

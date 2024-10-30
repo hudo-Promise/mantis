@@ -1,0 +1,101 @@
+tags:
+  - MANTIS 卡片相关接口
+summary:
+  - 添加卡片
+description:
+    添加卡片
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 添加卡片
+      properties:
+        board_id:
+          type: string
+        name:
+          type: string
+        cluster:
+          type: array
+          example: []
+        bar_type:
+          type: string
+          example: fuli/function
+        category:
+          type: array
+          example: []
+        available_carline:
+          type: array
+          example: []
+        test_carline:
+          type: array
+          example: []
+        available_language:
+          type: array
+          example: []
+        test_language:
+          type: array
+          example: [ ]
+        available_variant:
+          type: array
+          example: []
+        test_variant:
+          type: array
+          example: []
+        available_market:
+          type: array
+          example: []
+        test_market:
+          type: array
+          example: []
+        available_environment:
+          type: array
+          example: []
+        test_environment:
+          type: array
+          example: [ ]
+        available_platform:
+          type: array
+          example: []
+        test_platform:
+          type: array
+          example: [ ]
+        level:
+          type: array
+          example: []
+        available_carline_logic:
+          type: string
+          example: 'and/or'
+        available_variant_logic:
+          type: string
+          example: 'and/or'
+        available_market_logic:
+          type: string
+          example: 'and/or'
+        available_language_logic:
+          type: string
+          example: 'and/or'
+        available_environment_logic:
+          type: string
+          example: 'and/or'
+        available_platform_logic:
+          type: string
+          example: 'and/or'
+        card_groups:
+          type: dict
+          example: {
+            'xxx': {
+                'name': 'xxx',
+                'sub_function': [1, 2, 3],
+                'fuLi': [],
+                'comment': 'xxxx'
+            }
+        }
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

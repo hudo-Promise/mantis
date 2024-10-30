@@ -1,0 +1,28 @@
+tags:
+  - MANTIS 分享相关接口
+summary:
+  - 添加public看板
+description:
+    添加public看板
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 批量查看公共dashboard
+      properties:
+        unique_id_list:
+          type: array
+          example: []
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }

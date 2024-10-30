@@ -1,0 +1,25 @@
+tags:
+  - MANTIS 筛选条件相关接口
+summary:
+  - 删除筛选条件
+description:
+    删除筛选条件
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 删除筛选条件
+      properties:
+        id:
+          type: integer
+          example: 1
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

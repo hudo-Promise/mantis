@@ -1,0 +1,29 @@
+tags:
+  - MANTIS 分享相关接口
+summary:
+  - 标记站内信已读
+description:
+    标记站内信已读
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 标记站内信已读
+      properties:
+        user_id:
+          type: integer
+        share_record_id:
+          type: integer
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }

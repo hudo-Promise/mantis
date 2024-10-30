@@ -1,0 +1,40 @@
+tags:
+  - MANTIS 看板相关接口
+summary:
+  - 删除看板
+description:
+  删除看板
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 删除看板
+      required:
+        - board_id
+        - user_id
+      properties:
+        board_id:
+          type: string
+        user_id:
+          type: string
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }
+  10007:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10007,
+          msg: The key is incorrect,
+        }

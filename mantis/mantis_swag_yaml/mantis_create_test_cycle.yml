@@ -1,0 +1,34 @@
+tags:
+  - MANTIS Test Cycle 相关接口
+summary:
+  - 添加 Test Cycle
+description:
+    添加 Test Cycle
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 添加 Test Cycle
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        cluster:
+          type: integer
+          example: 1
+        start_date:
+          type: string
+          example: xxxx-xx-xx
+        due_date:
+          type: string
+          example: xxxx-xx-xx
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

@@ -1,0 +1,67 @@
+tags:
+  - MANTIS D-Map相关接口
+summary:
+  上传 d-map 测试用例结果
+description:
+    上传 d-map 测试用例结果
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 上传 d-map 测试用例结果
+      properties:
+        m_id:
+          type: integer
+        test_sw:
+          type: string
+        test_result:
+          type: string
+        test_platform:
+          type: string
+        test_carline:
+          type: string
+        test_variant:
+          type: string
+        test_market:
+          type: string
+        test_language:
+          type: string
+        test_environment:
+          type: string
+        tb_type:
+          type: string
+        issue_descr:
+          type: string
+        comments:
+          type: string
+        extra_1:
+          type: string
+        extra_2:
+          type: string
+        extra_3:
+          type: string
+
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "total_num": 0,
+          "data": "null",
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }

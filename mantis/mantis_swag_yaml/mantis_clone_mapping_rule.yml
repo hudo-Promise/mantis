@@ -1,0 +1,33 @@
+tags:
+  - MANTIS mapping rule 相关接口
+summary:
+  - 克隆 mapping rule
+description:
+    克隆 mapping rule
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 克隆 mapping rule
+      properties:
+        id:
+          type: integer
+        cluster:
+          type: integer
+          example: 1
+        mapping_name:
+          type: string
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": null,
+          "msg": "Execute succeeded"
+        }

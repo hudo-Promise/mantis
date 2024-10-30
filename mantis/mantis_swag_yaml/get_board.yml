@@ -1,0 +1,62 @@
+tags:
+  - MANTIS 看板相关接口
+summary:
+  - 查询看板
+description:
+    查询看板
+
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 获取看板
+      properties:
+        user_id:
+          type: string
+        query_type:
+          type: string
+          example: "private/public/precise/recommend"
+        page_num:
+          type: integer
+        page_size:
+          type: integer
+        board_id:
+          type: integer
+        username:
+          type: string
+        dashboard_name:
+          type: string
+        cluster:
+          type: integer
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [
+            {
+              "board_id": string,
+              "cluster": integer,
+              "create_time": string,
+              "desc": string,
+              "id": integer,
+              "name": string,
+              "status": integer
+            }
+          ],
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }

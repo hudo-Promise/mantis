@@ -1,0 +1,57 @@
+tags:
+  - MANTIS 字段管理相关接口
+summary:
+  - 创建 group/function/fuLi
+description: |
+    field 参数为必填项   
+    当 field 为 group    group_name 不为空        
+    当 field 为 function    mantis_group_id & function_name 不为空        
+    当 field 为 sub_function    mantis_group_id & function_id & sub_function_name 不为空        
+    当 field 为 fuLi_group    fuLi_group_name 不为空        
+    当 field 为 fuLi    fuLi_id & fuLi_group_id & fuLi_desc 不为空
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 创建
+      properties:
+        field:
+          type: string
+          example: group/function/sub_function/fuLi_group/fuLi
+        group_name:
+          type: string
+          example: xxx
+        mantis_group_id:
+          type: integer
+          example: 1
+        function_name:
+          type: string
+          example: xxx
+        function_id:
+          type: integer
+          example: 1
+        sub_function_name:
+          type: string
+          example: xxx
+        fuLi_group_name:
+          type: string
+          example: xxx
+        fuLi_id:
+          type: string
+          example: xxx
+        fuLi_group_id:
+          type: integer
+          example: 1
+        fuLi_desc:
+          type: string
+          example: xxx
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

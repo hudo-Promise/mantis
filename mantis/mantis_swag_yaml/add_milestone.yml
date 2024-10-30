@@ -1,0 +1,83 @@
+tags:
+  - MANTIS 里程碑相关接口
+summary:
+  - 创建里程碑
+description:
+    创建里程碑
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 创建里程碑
+      properties:
+        milestone_name:
+          type: string
+        cluster:
+          type: array
+          example: []
+        board_id:
+          type: string
+        category:
+          type: array
+          example: []
+        available_market:
+          type: array
+          example: []
+        available_platform:
+          type: array
+          example: []
+        available_carline:
+          type: array
+          example: []
+        available_variant:
+          type: array
+          example: [ ]
+        available_environment:
+          type: array
+          example: [ ]
+        available_language:
+          type: array
+          example: [ ]
+        start_date:
+          type: string
+          example: xxxx-xx-xx
+        end_date:
+          type: string
+          example: xxxx-xx-xx
+        available_carline_logic:
+          type: string
+          example: 'and/or'
+        available_variant_logic:
+          type: string
+          example: 'and/or'
+        available_market_logic:
+          type: string
+          example: 'and/or'
+        available_language_logic:
+          type: string
+          example: 'and/or'
+        available_environment_logic:
+          type: string
+          example: 'and/or'
+        available_platform_logic:
+          type: string
+          example: 'and/or'
+        milestone_line:
+          type: dict
+          example: {
+                      'name': {'date': xxxx-xx-xx},
+                  }
+        milestone_group:
+          type: dict
+          example: {
+                      'name': {'start_date': xxxx-xx-xx, 'end_date': xxxx-xx-xx, 'function': []},
+                  }
+
+
+responses:
+  200:
+     example:
+  500:
+     description: 执行失败
+     example:

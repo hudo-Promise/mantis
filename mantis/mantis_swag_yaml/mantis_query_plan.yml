@@ -1,0 +1,50 @@
+tags:
+  - MANTIS 计划相关接口
+summary:
+  - 计划查询
+description:
+    计划查询
+
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 计划查询
+      properties:
+        page_num:
+          type: integer
+        page_size:
+          type: integer
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [
+            {
+              "board_id": string,
+              "cluster": integer,
+              "create_time": string,
+              "desc": string,
+              "id": integer,
+              "name": string,
+              "status": integer
+            }
+          ],
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }

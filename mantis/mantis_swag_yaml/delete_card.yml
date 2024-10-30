@@ -1,0 +1,37 @@
+tags:
+  - MANTIS 卡片相关接口
+summary:
+  - 删除卡片
+description:
+  删除卡片
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 删除卡片
+      required:
+        - board_id
+      properties:
+        card_id:
+          type: string
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }
+  10007:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10007,
+          msg: The key is incorrect,
+        }

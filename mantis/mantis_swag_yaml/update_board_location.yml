@@ -1,0 +1,42 @@
+tags:
+  - MANTIS 看板相关接口
+summary:
+  - 更新看板内容位置信息
+description:
+    更新看板内容位置信息
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 更新看板内容位置信息
+      properties:
+        action:
+          type: string
+          example: "move/delete/edit"
+        board_id:
+          type: string
+        source_location_id:
+          type: integer
+        target_location_id:
+          type: integer
+        data_id:
+          type: integer
+        type:
+          type: string
+        length:
+          type: integer
+        width:
+          type: integer
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }

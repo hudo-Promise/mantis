@@ -1,0 +1,43 @@
+tags:
+  - MANTIS 分享相关接口
+summary:
+  - 添加分享记录
+description:
+    添加分享记录
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 添加分享记录
+      properties:
+        sender:
+          type: integer
+        receiver:
+          type: array
+          example: []
+        share_type:
+          type: integer
+          example: '1 station_mail/ 2 e_mail/ 3 url'
+        config:
+          type: dict
+          example: {
+            dashboard_id: {
+                card_id: [],
+                milestone_id: []
+            }
+        }
+        share_key:
+          type: string
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }

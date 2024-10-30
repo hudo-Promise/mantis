@@ -1,0 +1,61 @@
+services:
+  op11-test:
+    build:
+      context: ..
+      dockerfile: ./docker_file/Dockerfile-op11-test
+    container_name: op11-test
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "10003:10003"
+    volumes:
+      - ..:/home/OnePlatform
+    command: nohup uwsgi --ini uwsgi.ini > op11.log 2>&1 &
+    networks:
+      - op11_test_network
+    restart: unless-stopped
+
+
+  mysql-test:
+    image: mysql:8.0.39
+    container_name: mysql-op11-test
+    environment:
+
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: Auditaee11..2021
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Auditaee11..2021
+    ports:
+      - "33063:3306"
+    volumes:
+      - mysql_test_data:/var/lib/mysql
+      - ../config/mysql.cnf:/etc/mysql/my.cnf
+      - ../initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - mysql_test_network
+    restart: always
+
+  redis-test:
+    image: redis:6.0.10
+    container_name: redis-op11-test
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "63793:6379"
+    volumes:
+      - ../config/redis.conf:/usr/local/etc/redis/redis.cnf
+    command: redis-server /usr/local/etc/redis/redis.cnf
+    networks:
+      - redis_test_network
+    restart: always
+
+volumes:
+  mysql_test_data:
+
+networks:
+  op11_test_network:
+    driver: bridge
+  mysql_test_network:
+    driver: bridge
+  redis_test_network:
+    driver: bridge

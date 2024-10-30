@@ -1,0 +1,38 @@
+tags:
+  - MANTIS 通用信息相关接口
+summary:
+  - 异步接口测试
+description:
+    异步接口测试  - 仅后端使用
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [
+                    {
+                      "function_id": 1,
+                      "function_name": "china media function",
+                      "sub": [
+                              {
+                                "function_id": 1,
+                                "function_name": "leting"
+                                }
+                              ]
+                      }
+                    ],
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }

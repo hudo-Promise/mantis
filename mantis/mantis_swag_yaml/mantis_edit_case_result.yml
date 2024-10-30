@@ -1,0 +1,65 @@
+tags:
+  - MANTIS case相关接口
+summary:
+  - 编辑结果
+description:
+  编辑结果
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 编辑结果
+      properties:
+        id:
+          type: integer
+        tester:
+          type: integer
+        test_sw:
+          type: string
+        test_result:
+          type: integer
+        test_platform:
+          type: integer
+        test_carline:
+          type: integer
+        test_variant:
+          type: integer
+        test_market:
+          type: integer
+        test_language:
+          type: integer
+        test_environment:
+          type: integer
+        tb_type:
+          type: integer
+        issue_descr:
+          type: string
+        comments:
+          type: string
+        extra_1:
+          type: string
+        extra_2:
+          type: string
+        extra_3:
+          type: string
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }
+  10007:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10007,
+          msg: The key is incorrect,
+        }

@@ -1,0 +1,64 @@
+tags:
+  - MANTIS 筛选条件相关接口
+summary:
+  - 编辑筛选条件
+description:
+    编辑筛选条件
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 编辑筛选条件
+      properties:
+        id:
+          type: integer
+          example: 1
+        filter_name:
+          type: string
+          example: length <= 32
+        filter_desc:
+          type: string
+          example: length <= 256
+        filter_config:
+          type: array
+          example: {
+            "available_carline": [],
+            "available_carline_logic": "and/or",
+            "available_environment": [],
+            "available_environment_logic": "and/or",
+            "available_language": [],
+            "available_language_logic": "and/or",
+            "available_market": [],
+            "available_market_logic": "and/or",
+            "available_platform": [],
+            "available_platform_logic": "and/or",
+            "available_variant": [],
+            "available_variant_logic": "and/or",
+            "category": [],
+            "cluster": [],
+            "fuLi_value": [],
+            "level": [],
+            "mode": "xxx",
+            "sub_function": [],
+            "tb_type": [],
+            "test_carline": [],
+            "test_environment": [],
+            "test_language": [],
+            "test_market": [],
+            "test_platform": [],
+            "test_result": [],
+            "test_variant": [],
+          }
+        visibility_level:
+          type: integer
+          example: "0 private 1 public"
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

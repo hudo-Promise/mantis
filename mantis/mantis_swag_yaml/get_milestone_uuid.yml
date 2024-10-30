@@ -1,0 +1,28 @@
+tags:
+  - MANTIS 里程碑相关接口
+summary:
+  - 查询数据状态
+description:
+    查询数据状态
+parameters:
+  - name: update_uuid
+    in: query
+    type: string
+    required: true
+  - name: type
+    in: query
+    type: string
+    example: "milestone/card"
+    required: true
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [],
+          "msg": "Execute succeeded"
+        }

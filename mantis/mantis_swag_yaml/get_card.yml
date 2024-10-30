@@ -1,0 +1,56 @@
+tags:
+  - MANTIS 卡片相关接口
+summary:
+  - 查询卡片
+description:
+    查询卡片
+parameters:
+  - name: board_id
+    in: query
+    type: string
+    required: true
+  - name: card_id
+    in: query
+    type: integer
+    required: false
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [
+            {
+              "id": integer,
+              "name": string,
+              "filter": {
+                'cluster': [],
+                'category': [],
+                'market': [],
+                'language': [],
+                'environment': [],
+                'platform': [],
+                'level': []
+              },
+              "function_number": {
+                        "pass": 0,
+                        "tb": 0,
+                        "-": 0,
+                        "fail": 0,
+              },
+            }
+          ],
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }

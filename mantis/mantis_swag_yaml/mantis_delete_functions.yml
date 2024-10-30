@@ -1,0 +1,28 @@
+tags:
+  - MANTIS 字段管理相关接口
+summary:
+  - 删除 group/function/fuLi
+description:
+    id & field 参数为必填项
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 删除
+      properties:
+        id:
+          type: integer
+          example: 1
+        field:
+          type: string
+          example: group/function/sub_function/fuLi_group/fuLi
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

@@ -1,0 +1,30 @@
+tags:
+  - MANTIS 计划相关接口
+summary:
+  - plan文件上传
+description:
+    plan文件上传
+consumes:
+  - multipart/form-data
+parameters:
+  - name: files
+    in: formData
+    type: file
+    required: true
+#  - name: mode
+#    in: formData
+#    type: string
+#    required: true
+#    example: upload/delete_case/delete_sw
+#  - name: key
+#    in: formData
+#    type: string
+#    required: false
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

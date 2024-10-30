@@ -1,0 +1,36 @@
+tags:
+  - MANTIS 看板相关接口
+summary:
+  - 添加看板内容位置信息
+description:
+    添加看板内容位置信息
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 添加看板内容位置信息
+      properties:
+        board_id:
+          type: string
+        location_id:
+          type: integer
+        length:
+          type: string
+        width:
+          type: string
+        type:
+          type: string
+        data_id:
+          type: integer
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }

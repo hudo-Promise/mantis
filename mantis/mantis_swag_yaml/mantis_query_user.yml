@@ -1,0 +1,24 @@
+tags:
+  - MANTIS 通用信息相关接口
+summary:
+  - MANTIS用户查询
+description:
+    MANTIS用户查询
+parameters:
+  - name: account
+    in: query
+    type: string
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [],
+          "msg": "Execute succeeded"
+        }
+

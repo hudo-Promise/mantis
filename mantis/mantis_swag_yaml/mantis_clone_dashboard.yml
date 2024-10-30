@@ -1,0 +1,51 @@
+tags:
+  - MANTIS 分享相关接口
+summary:
+  - 克隆看板
+description:
+    克隆看板
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 克隆看板
+      properties:
+        clone_type:
+          type: string
+          example: 'create/insert'
+        cluster:
+          type: integer
+        config:
+          type: dict
+          example: {
+            card_id: [],
+            milestone_id: []
+          }
+
+        target_user_id:
+          type: integer
+        name:
+          type: string
+        desc:
+          type: string
+        visibility_level:
+          type: integer
+          example: '0 private / 1 public'
+
+        target_dashboard_id:
+          type: string
+          example: '1e1cacd4-fb65-11ed-a4c1-2c27d728dbe8'
+
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }

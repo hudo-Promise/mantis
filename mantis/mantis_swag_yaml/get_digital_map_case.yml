@@ -1,0 +1,26 @@
+tags:
+  - MANTIS D-Map相关接口
+summary:
+  查询 D-Map case
+description:
+  查询D-Map Case
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }

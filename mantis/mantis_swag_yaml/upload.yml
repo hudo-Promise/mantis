@@ -1,0 +1,39 @@
+tags:
+  - MANTIS case相关接口
+summary:
+  - 上传 case 文件
+description:
+    上传case文件
+consumes:
+  - multipart/form-data
+parameters:
+  - name: files
+    in: formData
+    type: file
+    required: true
+  - name: cluster
+    in: formData
+    type: integer
+    required: false
+  - name: mode
+    in: formData
+    type: string
+    required: true
+    example: upload/delete_case/delete_sw
+  - name: key
+    in: formData
+    type: string
+    required: false
+  - name: userid
+    in: formData
+    type: string
+    required: false
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

@@ -1,0 +1,28 @@
+tags:
+  - MANTIS case相关接口
+summary:
+  - 查询结果版本号
+description:
+    查询结果版本号
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [],
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }

@@ -1,0 +1,27 @@
+tags:
+  - MANTIS case相关接口
+summary:
+  - 生成格式化 id 标题
+description:
+    生成格式化 id 标题
+
+parameters:
+  - name: query
+    in: query
+    type: string
+    required: true
+
+  - name: mapping_rule
+    in: query
+    type: string
+    required: true
+
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

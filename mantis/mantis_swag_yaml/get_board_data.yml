@@ -1,0 +1,44 @@
+tags:
+  - MANTIS 看板相关接口
+summary:
+  - 看板数据查询
+description:
+    看板数据查询
+
+parameters:
+  - name: board_id
+    in: query
+    type: string
+    required: true
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [
+            {
+              "board_id": string,
+              "cluster": integer,
+              "create_time": string,
+              "desc": string,
+              "id": integer,
+              "name": string,
+              "status": integer
+            }
+          ],
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }

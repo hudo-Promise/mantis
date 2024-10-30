@@ -1,0 +1,27 @@
+tags:
+  - MANTIS 分享相关接口
+summary:
+  - 查看分享内容
+description:
+    查看分享内容
+parameters:
+  - name: unique_id
+    in: query
+    type: string
+  - name: user_id
+    in: query
+    type: integer
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": [],
+          "msg": "Execute succeeded"
+        }
+

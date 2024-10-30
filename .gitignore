@@ -1,0 +1,12 @@
+/.idea
+__pycache__
+/logs
+/venv
+/auxiliary_tool/add_user
+/download_file
+/uwsgi.pid
+/test.py
+*.out
+*.log
+*.json
+/static

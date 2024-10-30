@@ -1,0 +1,89 @@
+tags:
+  - MANTIS mapping rule 相关接口
+summary:
+  - 编辑 mapping rule
+description:
+    编辑 mapping rule
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 编辑 mapping rule
+      properties:
+        id:
+          type: integer
+        mapping_name:
+          type: string
+        function:
+          type: array
+          example: [1]
+        sub_function:
+          type: array
+          example: [1]
+        fuLi_id:
+          type: array
+          example: [1]
+        category:
+          type: array
+          example: [1]
+        level:
+          type: array
+          example: [1]
+        cluster:
+          type: integer
+          example: 1
+        available_platform:
+          type: array
+          example: [1]
+        available_carline:
+          type: array
+          example: [1]
+        available_variant:
+          type: array
+          example: [1]
+        available_market:
+          type: array
+          example: [1]
+        available_language:
+          type: array
+          example: [1]
+        available_environment:
+          type: array
+          example: [1]
+        test_platform:
+          type: array
+          example: [1]
+        test_carline:
+          type: array
+          example: [1]
+        test_variant:
+          type: array
+          example: [1]
+        test_market:
+          type: array
+          example: [1]
+        test_language:
+          type: array
+          example: [1]
+        test_environment:
+          type: array
+          example: [1]
+        test_result:
+          type: array
+          example: [1]
+        tb_type:
+          type: array
+          example: [1]
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": null,
+          "msg": "Execute succeeded"
+        }

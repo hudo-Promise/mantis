@@ -1,0 +1,30 @@
+tags:
+  - MANTIS 分享相关接口
+summary:
+  - 查询站内信
+description:
+    查询站内信
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 查询站内信
+      properties:
+        user_id:
+          type: integer
+        status:
+          type: array
+          example: []
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }

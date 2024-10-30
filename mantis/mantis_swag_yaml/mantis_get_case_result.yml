@@ -1,0 +1,83 @@
+tags:
+  - MANTIS case相关接口
+summary:
+  - 查询 case result
+description:
+    查询 case result
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 测试用例结果查询
+      properties:
+        page_size:
+          type: integer
+          example: 20
+        page_num:
+          type: integer
+          example: 1
+        title:
+          type: string
+        m_id:
+          type: integer
+          example: 1
+        sub_function:
+          type: array
+          example: []
+        fuLi_id:
+          type: array
+          example: []
+        cluster:
+          type: integer
+        test_platform:
+          type: array
+          example: []
+        test_carline:
+          type: array
+          example: []
+        test_variant:
+          type: array
+          example: []
+        test_market:
+          type: array
+          example: []
+        test_language:
+          type: array
+          example: []
+        test_environment:
+          type: array
+          example: []
+        test_result:
+          type: array
+          example: []
+        tb_type:
+          type: array
+          example: []
+        test_sw:
+          type: string
+          example: []
+
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "total_num": 0,
+          "data": [],
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }
