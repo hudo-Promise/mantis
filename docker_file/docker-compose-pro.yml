@@ -1,13 +1,13 @@
 services:
-  op11-pro:
+  mantis-pro:
     build:
       context: ..
-      dockerfile: ./docker_file/Dockerfile-op11-pro
-    container_name: op11-pro
+      dockerfile: ./docker_file/Dockerfile-mantis-pro
+    container_name: mantis-pro
     environment:
       TZ: Asia/Shanghai
     ports:
-      - "10001:10001"
+      - "10051:10051"
     volumes:
       - ..:/home/OnePlatform
     command: nohup uwsgi --ini uwsgi.ini > op11.log 2>&1 &
@@ -16,45 +16,7 @@ services:
     restart: unless-stopped
 
 
-  mysql-pro:
-    image: mysql:8.0.39
-    container_name: mysql-op11-pro
-    environment:
-      TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD: Auditaee11..2021
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Auditaee11..2021
-    ports:
-      - "33061:33061"
-    volumes:
-      - mysql_pro_data:/var/lib/mysql
-      - ../config/mysql.cnf:/etc/mysql/my.cnf
-      - ../initdb.d:/docker-entrypoint-initdb.d
-    networks:
-      - mysql_pro_network
-    restart: always
-
-  redis-pro:
-    image: redis:6.0.10
-    container_name: redis-op11-pro
-    environment:
-      TZ: Asia/Shanghai
-    ports:
-      - "63791:63791"
-    volumes:
-      - ../config/redis.conf:/usr/local/etc/redis/redis.cnf
-    command: redis-server /usr/local/etc/redis/redis.cnf
-    networks:
-      - redis_pro_network
-    restart: always
-
-volumes:
-  mysql_pro_data:
-
 networks:
   op11_pro_network:
     driver: bridge
-  mysql_pro_network:
-    driver: bridge
-  redis_pro_network:
-    driver: bridge
+

@@ -31,9 +31,9 @@ SECRET_KEY = SECRET_KEY_DICT.get(SERVICE_MODE)
 
 
 SERVICE_PORT_DICT = {
-    'product': 10001,
-    'develop': 10002,
-    'testing': 10003
+    'product': 10051,
+    'develop': 10052,
+    'testing': 10053
 }
 SERVICE_PORT = SERVICE_PORT_DICT.get(SERVICE_MODE)
 
@@ -62,9 +62,6 @@ LOGIN_FREE_VERIFICATION = [
 
 db_dict = {
     'mantis': 'mantis_db',
-    'tms': 'tms_db',
-    'tts': 'tts_db',
-    'ra': 'ra_db'
 }
 
 
@@ -156,8 +153,8 @@ class InstanceConfig(BaseConfig):
             ],
             "static_url_path": "/flasgger_static",
             "swagger_ui": True,
-            "specs_route": "/v1.0.0/doc",
-            "basePath": base_path
+            "specs_route": f"/{base_path}/v1.0.0/doc",
+            # "basePath": base_path
         }
 
     @classmethod

@@ -1,60 +1,22 @@
 services:
-  op11-dev:
+  mantis-dev:
     build:
       context: ..
-      dockerfile: ./docker_file/Dockerfile-op11-dev
-    container_name: op11-dev
+      dockerfile: ./docker_file/Dockerfile-mantis-dev
+    container_name: mantis-dev
     environment:
       TZ: Asia/Shanghai
     ports:
-      - "10002:10002"
+      - "10052:10052"
     volumes:
       - ..:/home/OnePlatform
     command: nohup uwsgi --ini uwsgi.ini &
     networks:
-      - op11_dev_network
+      - mantis_dev_network
     restart: unless-stopped
 
 
-  mysql-dev:
-    image: mysql:8.0.39
-    container_name: mysql-op11-dev
-    environment:
-      TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD: Auditaee11..2021
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Auditaee11..2021
-    ports:
-      - "33062:3306"
-    volumes:
-      - mysql_dev_data:/var/lib/mysql
-      - ../config/mysql.cnf:/etc/mysql/my.cnf
-      - ../initdb.d:/docker-entrypoint-initdb.d
-    networks:
-      - mysql_dev_network
-    restart: always
-
-  redis-dev:
-    image: redis:6.0.10
-    container_name: redis-op11-dev
-    environment:
-      TZ: Asia/Shanghai
-    ports:
-      - "63792:6379"
-    volumes:
-      - ../config/redis.conf:/usr/local/etc/redis/redis.cnf
-    command: redis-server /usr/local/etc/redis/redis.cnf
-    networks:
-      - redis_dev_network
-    restart: always
-
-volumes:
-  mysql_dev_data:
-
 networks:
-  op11_dev_network:
+  mantis_dev_network:
     driver: bridge
-  mysql_dev_network:
-    driver: bridge
-  redis_dev_network:
-    driver: bridge
+

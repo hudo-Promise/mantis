@@ -5,30 +5,6 @@ from mantis.mantis_caches import mantis_update_sw_cache
 from mantis.mantis_status import mantis_project, field_display_order
 from mantis.models import mantis_db
 from mantis.models.case import SWMap
-from tms.models import tms_db
-from tms.tms_app import tms_app
-from tms.models.tms_user import TMSUser
-
-
-def query_mantis_user_tool(request_params):
-    account = request_params.get('account')
-    with tms_app.app_context():
-        filter_list = [
-            TMSUser.delete_flag == 0,
-            tms_db.func.json_contains(TMSUser.project, json.dumps([5]))
-        ]
-        if account:
-            filter_list.append(TMSUser.account.like('%' + account.lower() + '%'))
-        mantis_users = TMSUser.query.filter(*filter_list).all()
-    mantis_user_list = []
-    for mantis_user in mantis_users:
-        current_user = {
-            'id': mantis_user.id,
-            'account': mantis_user.account,
-            'username': mantis_user.username,
-        }
-        mantis_user_list.append(current_user)
-    return mantis_user_list
 
 
 def get_common_info_tool():
