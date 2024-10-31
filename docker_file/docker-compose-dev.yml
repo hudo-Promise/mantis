@@ -9,7 +9,7 @@ services:
     ports:
       - "10052:10052"
     volumes:
-      - ..:/home/OnePlatform
+      - ..:/home/project/develop/mantis
     command: nohup uwsgi --ini uwsgi.ini &
     networks:
       - mantis_dev_network
