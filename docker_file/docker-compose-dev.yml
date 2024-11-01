@@ -17,6 +17,5 @@ services:
 
 
 networks:
-  default:
+  ta_network:
     external: true
-    name: ta_network
