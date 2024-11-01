@@ -12,10 +12,11 @@ services:
       - ..:/home/project/testing/mantis
     command: nohup uwsgi --ini uwsgi.ini > op11.log 2>&1 &
     networks:
-      - mantis_test_network
+      - ta_network
     restart: unless-stopped
 
 
 networks:
-  mantis_test_network:
-    driver: bridge
+  default:
+      external:
+        name: ta_network
