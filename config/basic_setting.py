@@ -153,7 +153,7 @@ class InstanceConfig(BaseConfig):
             ],
             "static_url_path": "/flasgger_static",
             "swagger_ui": True,
-            "specs_route": f"/{base_path}/v1.0.0/doc",
+            "specs_route": f"{base_path}/v1.0.0/doc",
             # "basePath": base_path
         }
 
