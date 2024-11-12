@@ -138,11 +138,16 @@ user_operate_record_url_list = [
 ]
 
 
-field_display_order = [
-    'cluster', 'category', 'level', 'test_result', 'tb_type', 'available_platform', 'test_platform',
-    'available_carline', 'test_carline', 'available_variant', 'test_variant', 'available_market', 'test_market',
-    'available_language', 'test_language', 'available_environment', 'test_environment'
-]
+field_display_order = {
+    'case': [
+        'category', 'level', 'available_platform', 'available_carline', 'available_variant', 'available_market',
+        'available_language', 'available_environment'
+    ],
+    'result': [
+        'category', 'level', 'test_result', 'tb_type',  'test_platform', 'test_carline',  'test_variant',
+        'test_market', 'test_language',  'test_environment'
+    ]
+}
 
 
 test_case_key = [
