@@ -22,6 +22,9 @@ parameters:
         mode:
           type: string
           example: xxx
+        without_null:
+          type: bool
+          example: true
         case_id:
           type: array
           example: []
