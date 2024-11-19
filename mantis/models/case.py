@@ -77,6 +77,7 @@ class CaseResult(mantis_db.Model):
     extra_1 = mantis_db.Column(mantis_db.String(16), nullable=True, comment='补充数据1')
     extra_2 = mantis_db.Column(mantis_db.String(16), nullable=True, comment='补充数据2')
     extra_3 = mantis_db.Column(mantis_db.String(16), nullable=True, comment='补充数据3')
+    aug_task_id = mantis_db.Column(mantis_db.Integer, nullable=False, comment='AutoGo结果唯一ID')
     create_time = mantis_db.Column(mantis_db.DateTime, nullable=True, comment='创建时间')
     upgrade_time = mantis_db.Column(mantis_db.DateTime, nullable=True, comment='更新时间')
 
