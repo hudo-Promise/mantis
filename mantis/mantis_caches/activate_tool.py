@@ -183,7 +183,7 @@ def activate_case_result_aug(curr):
     """
     curr.execute(case_result_sql)
     case_results = curr.fetchall()
-    aug_id_mapping = {case_result.get('id'): case_result.get('aug_task_id') for case_result in case_results}
+    aug_id_mapping = {case_result.get('aug_task_id'): case_result.get('id') for case_result in case_results}
     return aug_id_mapping
 
 
