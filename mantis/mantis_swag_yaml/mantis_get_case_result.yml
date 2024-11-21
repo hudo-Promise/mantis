@@ -55,7 +55,7 @@ parameters:
           type: array
           example: []
         test_sw:
-          type: string
+          type: array
           example: []
 
 

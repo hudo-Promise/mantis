@@ -21,7 +21,7 @@ parameters:
           example: xxx
         mode:
           type: string
-          example: xxx
+          example: latest/appoint_sw/all
         without_null:
           type: bool
           example: true
@@ -59,6 +59,9 @@ parameters:
           type: array
           example: []
         available_environment:
+          type: array
+          example: []
+        test_sw:
           type: array
           example: []
         test_platform:

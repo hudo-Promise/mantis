@@ -273,9 +273,18 @@ case_result_param = [
 ]
 
 
-test_status = {
-    1: 'Open',
+milestone_status = {
+    1: 'To Do',
     2: 'In Progress',
-    3: 'Finished',
-    4: 'Delay',
+    3: 'Done',
+    4: 'Delay'
+}
+
+
+cycle_status = {
+    1: 'To Do',
+    2: 'In Queue',
+    3: 'In Progress',
+    4: 'Done',
+    5: 'Delay'
 }
