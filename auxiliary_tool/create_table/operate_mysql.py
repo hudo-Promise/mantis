@@ -67,11 +67,6 @@ def create_tables(mode, sql_list):
 
 def run(mode):
     sql_dict = {
-        'bmt': [create_bmt_ticket_sql],
-        'itc': [
-            create_itc_wiki_entry_sql, create_itc_category_sql, create_itc_wiki_daily_browsing_record,
-            create_itc_tag_sql
-        ],
         'mantis': [
             create_mantis_board_sql, create_mantis_functions_sql, create_mantis_group_sql, create_mantis_card_group_sql,
             create_mantis_sw_map_sql, create_mantis_fuLi_sql, create_mantis_case_field_sql, create_mantis_test_case_sql,
@@ -79,22 +74,7 @@ def run(mode):
             create_mantis_sub_functions_sql, create_mantis_card_sql, create_mantis_plan_sql,
             create_mantis_milestone_sql, create_mantis_milestone_group_sql, create_mantis_operate_record_sql,
             create_mantis_mapping_rule_sql, create_mantis_share_record_sql, create_mantis_board_location_sql
-        ],
-        'ra': [
-            create_ra_leave_sql, create_ra_draft_sql, create_ra_leave_type_sql
-        ],
-        'tm': [
-            create_tm_ticket_sql, create_tm_time_consuming_sql,
-            create_tm_scheduled_tasks_sql, create_tm_platform_sql
-        ],
-        'tms': [
-            create_tms_user_sql, create_tms_role_sql, create_tms_project_sql, create_province_sql,
-            create_city_sql, create_county_sql, create_tms_department_sql, create_tms_group_sql,
-            create_tms_favorite_project_sql, create_tms_daily_activity_sql, create_tms_company_sql,
-            create_tms_message_sql, create_tms_email_sql,  create_tms_schedule_email_sql,
-            create_tms_schedule_history_sql,
-        ],
-        'tts': [create_tts_task_sql],
+        ]
     }
     create_tables(mode, sql_dict.get(mode.split('_')[0]))
 
