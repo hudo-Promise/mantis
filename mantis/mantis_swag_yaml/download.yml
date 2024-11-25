@@ -21,7 +21,7 @@ parameters:
           example: xxx
         mode:
           type: string
-          example: latest/appoint_sw/all
+          example: case/result
         without_null:
           type: bool
           example: true
