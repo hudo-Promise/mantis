@@ -5,6 +5,7 @@ from config.basic_setting import SECRET_KEY, SERVICE_MODE, LOGIN_FREE_VERIFICATI
     TOKEN_NAME, TOKEN_MD5
 from common_tools.status_code import response
 from common_tools.tools import global_logger
+from config.mantis_setting import MANTIS_API as API_PREFIX
 
 
 def activate_blacklist_redis_client():
@@ -35,7 +36,8 @@ def is_blacklisted(token_md5):
 
 def login_check():
     request.user_info = {}
-    if request.path in LOGIN_FREE_VERIFICATION:
+    url_path = request.path.replace(API_PREFIX, '', 1)
+    if url_path in LOGIN_FREE_VERIFICATION:
         return None
     try:
         token = request.cookies.get(TOKEN_NAME)
