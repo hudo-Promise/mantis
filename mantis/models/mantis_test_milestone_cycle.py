@@ -6,6 +6,7 @@ class MantisTestMileStone(mantis_db.Model):
     id = mantis_db.Column(mantis_db.Integer, primary_key=True, comment='主键')
     name = mantis_db.Column(mantis_db.String(64), nullable=False, comment='test milestone name')
     description = mantis_db.Column(mantis_db.Text, nullable=True, comment='描述')
+    project = mantis_db.Column(mantis_db.Integer, nullable=True, comment='项目')
     cluster = mantis_db.Column(mantis_db.Integer, nullable=False, comment='集群')
     status = mantis_db.Column(mantis_db.Integer, nullable=False, comment='状态')
     start_date = mantis_db.Column(mantis_db.String(16), nullable=True, comment='开始日期')

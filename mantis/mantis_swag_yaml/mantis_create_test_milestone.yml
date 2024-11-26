@@ -15,6 +15,8 @@ parameters:
           type: string
         description:
           type: string
+        project:
+          type: integer
         cluster:
           type: integer
           example: 1

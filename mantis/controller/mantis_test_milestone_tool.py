@@ -8,6 +8,7 @@ def mantis_create_test_milestone_tool(request_params):
     mtm = MantisTestMileStone(
         name=request_params.get('name'),
         description=request_params.get('description'),
+        project=request_params.get('project'),
         cluster=request_params.get('cluster'),
         status=1,
         start_date=request_params.get('start_date'),
@@ -23,7 +24,7 @@ def mantis_create_test_milestone_tool(request_params):
 def mantis_edit_test_milestone_tool(request_params):
     mtm = MantisTestMileStone.query.filter(MantisTestMileStone.id == request_params.get('id')).first()
     update_dict = {'update_time': create_current_format_time()}
-    update_key = ['name', 'description', 'cluster', 'status', 'due_date']
+    update_key = ['name', 'description', 'project', 'cluster', 'status', 'due_date']
     update_tool(update_dict, request_params, update_key, mtm)
     MantisTestMileStone.query.filter(MantisTestMileStone.id == request_params.get('id')).update(update_dict)
     mantis_db.session.commit()
@@ -40,6 +41,7 @@ def generate_test_milestone_tool(current_time, mtm):
         'id': mtm.id,
         'name': mtm.name,
         'description': mtm.description,
+        'project': mtm.project,
         'cluster': mtm.cluster,
         'status': mtm.status,
         'start_date': mtm.start_date,
