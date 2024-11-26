@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
-import base64
-import json
-import traceback
-import jwt
-from flask import request, session, Blueprint, make_response
-
-from config.basic_setting import SECRET_KEY, SERVICE_MODE, LOGIN_FREE_VERIFICATION
-from common_tools.status_code import response
-from common_tools.tools import generate_md5, global_logger
+from flask import request, Blueprint
+from common_tools.tools import global_logger
+from common_tools.sso_handlers import login_check
 
 middleware_blueprint = Blueprint('middleware', __name__)
+middleware_blueprint.before_app_request(login_check)
 
 
 @middleware_blueprint.after_app_request
