@@ -147,23 +147,23 @@ def mantis_update_case_cache(curr, case_id, update_method='create', origin_cache
 def mantis_init_test_case_cache(curr):
     lock_key = 'mantis_key'
     lock_acquired = op11_redis_client.set(lock_key, "locked", nx=True, ex=10)
-    if lock_acquired:
-        try:
-            cluster_dict = json.loads(op11_redis_client.get('field_id2value')).get('cluster')
-            key_list = ['exists_case', 'exists_result'] + [
-                f'test_case_cache_{cluster}' for cluster in cluster_dict.keys()
-            ]
-            op11_redis_client.delete(*key_list)
-            test_case_cache, exists_case_dict, exists_result_dict = activate_test_case(curr, cluster_dict)
-            for cluster, cases in test_case_cache.items():
-                if not cases:
-                    continue
-                op11_redis_client.lpush(f'test_case_cache_{cluster}', *cases)
-            op11_redis_client.hmset('exists_case', exists_case_dict)
-            op11_redis_client.hmset('exists_result', exists_result_dict)
-            op11_redis_client.hmset('aug_id_mapping', activate_case_result_aug(curr))
-        finally:
-            op11_redis_client.delete(lock_key)
+    if not lock_acquired:
+        global_logger.info('activate mantis cache lock failed')
+        return
+    try:
+        cluster_dict = json.loads(op11_redis_client.get('field_id2value')).get('cluster')
+        key_list = ['exists_case', 'exists_result'] + [f'test_case_cache_{cluster}' for cluster in cluster_dict.keys()]
+        op11_redis_client.delete(*key_list)
+        test_case_cache, exists_case_dict, exists_result_dict = activate_test_case(curr, cluster_dict)
+        for cluster, cases in test_case_cache.items():
+            if not cases:
+                continue
+            op11_redis_client.lpush(f'test_case_cache_{cluster}', *cases)
+        op11_redis_client.hmset('exists_case', exists_case_dict)
+        op11_redis_client.hmset('exists_result', exists_result_dict)
+        op11_redis_client.hmset('aug_id_mapping', activate_case_result_aug(curr))
+    finally:
+        op11_redis_client.delete(lock_key)
 
 
 def mantis_init_fuli(curr):

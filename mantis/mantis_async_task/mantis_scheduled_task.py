@@ -15,7 +15,7 @@ def init_scheduler(app):
         scheduler.init_app(app)
         scheduler.start()
         scheduler.add_job(id="mantis_activate_cache", func=activate_cache,
-                          trigger="cron", hour=1, minute=30, second=5)
+                          trigger="cron", hour=5, minute=10, second=5)
     except Exception as e:
         print(e)
 
