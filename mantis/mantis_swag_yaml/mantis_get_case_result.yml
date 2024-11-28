@@ -31,6 +31,12 @@ parameters:
           example: []
         cluster:
           type: integer
+        category:
+          type: array
+          example: []
+        level:
+          type: array
+          example: []
         test_platform:
           type: array
           example: []
