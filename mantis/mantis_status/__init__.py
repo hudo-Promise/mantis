@@ -277,7 +277,6 @@ milestone_status = {
     1: 'To Do',
     2: 'In Progress',
     3: 'Done',
-    4: 'Delay'
 }
 
 
@@ -286,5 +285,18 @@ cycle_status = {
     2: 'In Queue',
     3: 'In Progress',
     4: 'Done',
-    5: 'Delay'
+}
+
+free_test_status = {
+    1: 'Open',
+    2: 'In Progress',
+    3: 'Test OK',
+    4: 'Test NOK',
+    5: 'Test Blocked'
+}
+
+label_mapping = {
+    1: 'Risk',
+    2: 'Delay',
+    3: 'Normal'
 }

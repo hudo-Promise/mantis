@@ -15,9 +15,6 @@ parameters:
           type: string
         description:
           type: string
-        cluster:
-          type: integer
-          example: 1
         start_date:
           type: string
           example: xxxx-xx-xx

@@ -2,6 +2,7 @@ import json
 
 from common_tools.tools import create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, \
     op11_redis_client
+from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id
 from mantis.models import mantis_db
 from mantis.models.mantis_test_milestone_cycle import MantisTestCycle
 
@@ -11,12 +12,14 @@ def mantis_create_test_cycle_tool(request_params):
     cluster = request_params.get('cluster')
     case_list = request_params.get('case_list', [])
     mantis_update_test_cycle_info(case_list, cluster)
+    milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
     mtc = MantisTestCycle(
         linked_milestone=request_params.get('linked_milestone'),
+        project=milestone.project,
+        cluster=milestone.cluster,
         name=request_params.get('name'),
         description=request_params.get('description'),
         assignee=request_params.get('assignee'),
-        cluster=cluster,
         status=1,
         start_date=request_params.get('start_date'),
         due_date=request_params.get('due_date'),
@@ -31,8 +34,12 @@ def mantis_create_test_cycle_tool(request_params):
 def mantis_edit_test_cycle_tool(request_params):
     mtc = MantisTestCycle.query.filter(MantisTestCycle.id == request_params.get('id')).first()
     update_dict = {'update_time': create_current_format_time()}
-    update_key = ['linked_milestone', 'name', 'description', 'cluster', 'status', 'due_date', 'delete_flag']
+    update_key = ['linked_milestone', 'name', 'description', 'status', 'due_date', 'delete_flag']
     update_tool(update_dict, request_params, update_key, mtc)
+    milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
+    update_dict['cluster'] = milestone.cluster
+    update_dict['project'] = milestone.project
+
     MantisTestCycle.query.filter(MantisTestCycle.id == request_params.get('id')).update(update_dict)
     mantis_db.session.commit()
 
@@ -47,10 +54,11 @@ def generate_test_cycle_tool(current_time, mtc):
     return {
         'id': mtc.id,
         'linked_milestone': mtc.linked_milestone,
+        'project': mtc.project,
+        'cluster': mtc.cluster,
         'name': mtc.name,
         'description': mtc.description,
         'assignee': mtc.assignee,
-        'cluster': mtc.cluster,
         'status': mtc.status,
         'start_date': mtc.start_date,
         'due_date': mtc.due_date,

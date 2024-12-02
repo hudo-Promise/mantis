@@ -20,6 +20,7 @@ parameters:
           type: string
         project:
           type: integer
+          example: 1
         cluster:
           type: integer
           example: 1

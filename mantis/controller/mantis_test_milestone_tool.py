@@ -65,3 +65,8 @@ def mantis_delete_test_milestone_tool(request_params):
         MantisTestCycle.linked_milestone == request_params.get('id')
     ).update({'linked_milestone': None})
     mantis_db.session.commit()
+
+
+def get_test_milestone_by_id(test_milestone_id):
+    mtm = MantisTestMileStone.query.filter(MantisTestMileStone.id == test_milestone_id).first()
+    return mtm

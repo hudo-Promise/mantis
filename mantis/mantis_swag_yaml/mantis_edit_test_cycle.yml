@@ -18,9 +18,6 @@ parameters:
           type: string
         description:
           type: string
-        cluster:
-          type: integer
-          example: 1
         status:
           type: integer
           example: 1
