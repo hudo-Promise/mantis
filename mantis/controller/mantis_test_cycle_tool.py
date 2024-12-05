@@ -14,18 +14,21 @@ def mantis_create_test_cycle_tool(request_params):
     mantis_update_test_cycle_info(case_list, cluster)
     milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
     mtc = MantisTestCycle(
+        name=request_params.get('name'),
+        test_group=request_params.get('test_group'),
         linked_milestone=request_params.get('linked_milestone'),
         project=milestone.project,
         cluster=milestone.cluster,
-        name=request_params.get('name'),
-        description=request_params.get('description'),
-        assignee=request_params.get('assignee'),
-        status=1,
+        market=request_params.get('market'),
         start_date=request_params.get('start_date'),
         due_date=request_params.get('due_date'),
+        description=request_params.get('description'),
+        filter_id=request_params.get('filter_id'),
+        test_scenario=request_params.get('test_scenario'),
+        free_test_item=request_params.get('free_test_item'),
+        status=1,
         create_time=current_time,
         update_time=current_time,
-        delete_flag=0
     )
     mantis_db.session.add(mtc)
     mantis_db.session.commit()
@@ -34,12 +37,14 @@ def mantis_create_test_cycle_tool(request_params):
 def mantis_edit_test_cycle_tool(request_params):
     mtc = MantisTestCycle.query.filter(MantisTestCycle.id == request_params.get('id')).first()
     update_dict = {'update_time': create_current_format_time()}
-    update_key = ['linked_milestone', 'name', 'description', 'status', 'due_date', 'delete_flag']
+    update_key = [
+        'name', 'test_group', 'linked_milestone', 'market', 'start_date', 'due_date', 'description', 'filter_id',
+        'test_scenario', 'free_test_item', 'status'
+    ]
     update_tool(update_dict, request_params, update_key, mtc)
     milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
     update_dict['cluster'] = milestone.cluster
     update_dict['project'] = milestone.project
-
     MantisTestCycle.query.filter(MantisTestCycle.id == request_params.get('id')).update(update_dict)
     mantis_db.session.commit()
 
@@ -53,24 +58,27 @@ def mantis_get_test_cycle_tool(request_params):
 def generate_test_cycle_tool(current_time, mtc):
     return {
         'id': mtc.id,
+        'name': mtc.name,
+        'test_group': mtc.test_group,
         'linked_milestone': mtc.linked_milestone,
         'project': mtc.project,
         'cluster': mtc.cluster,
-        'name': mtc.name,
-        'description': mtc.description,
-        'assignee': mtc.assignee,
-        'status': mtc.status,
+        'market': mtc.market,
         'start_date': mtc.start_date,
         'due_date': mtc.due_date,
-        'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
         'actual_finish_date': mtc.actual_finish_date,
+        'description': mtc.description,
+        'filter_id': mtc.filter_id,
+        'test_scenario': mtc.test_scenario,
+        'free_test_item': mtc.free_test_item,
+        'status': mtc.status,
+        'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
         'time_to_finish': calculate_time_to_finish(
             get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
             0.9
         ),  # TODO
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
-        'delete_flag': mtc.delete_flag
     }
 
 

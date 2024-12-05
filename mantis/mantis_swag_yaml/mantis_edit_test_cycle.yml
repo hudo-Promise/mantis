@@ -16,20 +16,33 @@ parameters:
           example: 1
         name:
           type: string
-        description:
-          type: string
-        status:
+        test_group:
           type: integer
-          example: 1
+        linked_milestone:
+          type: integer
+        market:
+          type: array
+          example: []
         start_date:
           type: string
           example: xxxx-xx-xx
         due_date:
           type: string
           example: xxxx-xx-xx
-        delete_flag:
+        description:
+          type: string
+        filter_id:
           type: integer
-          example: 0
+        test_scenario:
+          type: integer
+        free_test_item:
+          type: array
+          example: [{
+            tester: 1,
+            desc: string
+          }]
+        status:
+          type: integer
 
 responses:
   200:
