@@ -1,5 +1,10 @@
-from common_tools.tools import create_current_format_time, get_gap_days, update_tool, calculate_time_to_finish
+from sqlalchemy import func, or_, and_
+from sqlalchemy.orm import aliased
+
+from common_tools.tools import create_current_format_time, get_gap_days, update_tool, calculate_time_to_finish, \
+    conditional_filter
 from mantis.models import mantis_db
+from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
 from mantis.models.mantis_test_milestone_cycle import MantisTestMileStone, MantisTestCycle
 
 
@@ -70,3 +75,62 @@ def mantis_delete_test_milestone_tool(request_params):
 def get_test_milestone_by_id(test_milestone_id):
     mtm = MantisTestMileStone.query.filter(MantisTestMileStone.id == test_milestone_id).first()
     return mtm
+
+
+def get_test_milestone_insight_graph(params_dict):
+    cycles = mantis_db.session.query(
+        MantisTestCycle.test_group, MantisTestCycle.free_test_item, MantisFilterRecord.filter_config
+    ).json(
+        MantisFilterRecord, MantisTestCycle.filter_id == MantisFilterRecord.id, isouter=True
+    ).filter(
+        MantisTestCycle.linked_milestone == params_dict.get('linked_milestone'),
+        MantisTestCycle.test_scenario == params_dict.get('test_scenario')
+    ).all()
+    insight = {}
+    for cycle in cycles:
+        if cycle.test_group not in insight.keys():
+            insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        for result_id, result_count in get_case_current_result(cycle.filter_config).items():
+            insight[cycle.test_group][result_id] += result_count
+    return insight
+
+
+def get_case_current_result(filter_config):
+    filter_list = parse_case_filter_config(filter_config)
+    subquery = mantis_db.session.query(CaseResult.m_id, CaseResult.test_result).subquery()
+    cr_alias = aliased(subquery, name='cr')
+    result_number = mantis_db.session.query(
+        func.max(cr_alias.c.test_result), func.count(1).label('count')
+    ).join(
+        cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
+    ).filter(*filter_list).group_by(cr_alias.c.test_result).all()
+    ret = {}
+    for row in result_number:
+        result = row.test_result if row.test_result is not None else 4
+        count = row.count
+        if result not in ret.keys():
+            ret[result] = count
+        else:
+            ret[result] += count
+    return ret
+
+
+def parse_case_filter_config(filter_config):
+    filter_list = []
+    case_column_dict = TestCase.get_field_dict()
+    for key, values in filter_config.items():
+        if key == 'fuLi_value':
+            key = 'fuLi_id'
+        if key not in case_column_dict.keys():
+            continue
+        if key.startswith('available_'):
+            current_filter_list = []
+            for value in values:
+                func.json_contains(case_column_dict.get(key), str(value))
+            if filter_config.get(f'{key}_logic') == 'or':
+                filter_list.append(or_(*current_filter_list))
+            elif filter_config.get(f'{key}_logic') == 'and':
+                filter_list.append(and_(*current_filter_list))
+        else:
+            conditional_filter(filter_list, case_column_dict.get(key), values)
+    return filter_list
