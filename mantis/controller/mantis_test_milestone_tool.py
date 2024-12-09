@@ -141,20 +141,14 @@ def get_case_current_result(filter_config, query_type=None):
     ).filter(*filter_list).group_by(cr_alias.c.test_result).all()
     ret = {}
     for row in result_number:
-        result = row.test_result if row.test_result is not None else 4
-        count = row.count
+        result, count = row.test_result if row.test_result is not None else 4, row.count
         if query_type == 'func':
             func_id = row.function
-            ret[func_id] = {}
-            if result not in ret[func_id].keys():
-                ret[func_id][result] = count
-            else:
-                ret[func_id][result] += count
+            if func_id not in ret.keys():
+                ret[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+            ret[func_id][result] = count if result not in ret[func_id].keys() else ret[func_id][result] + count
         else:
-            if result not in ret.keys():
-                ret[result] = count
-            else:
-                ret[result] += count
+            ret[result] = count if result not in ret.keys() else ret[result] + count
     return ret
 
 
