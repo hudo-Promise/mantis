@@ -1,3 +1,5 @@
+from collections import Counter
+
 from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import aliased
 
@@ -77,30 +79,63 @@ def get_test_milestone_by_id(test_milestone_id):
     return mtm
 
 
-def get_test_milestone_insight_graph(params_dict):
-    cycles = mantis_db.session.query(
-        MantisTestCycle.test_group, MantisTestCycle.free_test_item, MantisFilterRecord.filter_config
-    ).json(
-        MantisFilterRecord, MantisTestCycle.filter_id == MantisFilterRecord.id, isouter=True
-    ).filter(
-        MantisTestCycle.linked_milestone == params_dict.get('linked_milestone'),
-        MantisTestCycle.test_scenario == params_dict.get('test_scenario')
-    ).all()
+def get_test_milestone_insight_graph_tool(params_dict):
+    cycles = get_test_cycle_for_test_milestone(params_dict.get('linked_milestone'), params_dict.get('test_scenario'))
     insight = {}
     for cycle in cycles:
         if cycle.test_group not in insight.keys():
             insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
         for result_id, result_count in get_case_current_result(cycle.filter_config).items():
-            insight[cycle.test_group][result_id] += result_count
+            insight[cycle.test_group] = dict(Counter(insight[cycle.test_group]) + Counter(result_count))
     return insight
 
 
-def get_case_current_result(filter_config):
+def get_test_milestone_group_graph_tool(params_dict):
+    cycles = get_test_cycle_for_test_milestone(
+        params_dict.get('linked_milestone'),
+        params_dict.get('test_scenario'),
+        params_dict.get('group_id'),
+    )
+    insight = {}
+    for cycle in cycles:
+        if params_dict.get('test_scenario') == 1:
+            for func_id, result_count in get_case_current_result(cycle.filter_config).items():
+                if func_id not in insight.keys():
+                    insight[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+                insight[func_id] = dict(insight[func_id] + Counter(result_count))
+        elif params_dict.get('test_scenario') == 2:
+            for tester in cycle.free_test_item.keys():
+                if cycle.free_test_item not in insight.keys():
+                    insight[tester] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+                for result_id, result_count in get_case_current_result(cycle.filter_config).items():
+                    insight[tester] = dict(insight[tester] + Counter(result_count))
+    return insight
+
+
+def get_test_cycle_for_test_milestone(test_milestone_id, test_scenario, group_id=None):
+    filter_list = [
+        MantisTestCycle.linked_milestone == test_milestone_id, MantisTestCycle.test_scenario == test_scenario
+    ]
+    if group_id is not None:
+        filter_list.append(MantisTestCycle.test_group == group_id)
+    cycles = mantis_db.session.query(
+        MantisTestCycle.test_group, MantisTestCycle.free_test_item, MantisFilterRecord.filter_config
+    ).json(
+        MantisFilterRecord, MantisTestCycle.filter_id == MantisFilterRecord.id, isouter=True
+    ).filter(*filter_list).all()
+    return cycles
+
+
+def get_case_current_result(filter_config, query_type=None):
     filter_list = parse_case_filter_config(filter_config)
     subquery = mantis_db.session.query(CaseResult.m_id, CaseResult.test_result).subquery()
     cr_alias = aliased(subquery, name='cr')
+    common_query_list = [func.max(cr_alias.c.test_result), func.count(1).label('count')]
+    if query_type == 'func':
+        common_query_list = [func.max(TestCase.function)] + common_query_list
     result_number = mantis_db.session.query(
-        func.max(cr_alias.c.test_result), func.count(1).label('count')
+        # func.max(cr_alias.c.test_result), func.count(1).label('count')
+        *common_query_list
     ).join(
         cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
     ).filter(*filter_list).group_by(cr_alias.c.test_result).all()
@@ -108,10 +143,18 @@ def get_case_current_result(filter_config):
     for row in result_number:
         result = row.test_result if row.test_result is not None else 4
         count = row.count
-        if result not in ret.keys():
-            ret[result] = count
+        if query_type == 'func':
+            func_id = row.function
+            ret[func_id] = {}
+            if result not in ret[func_id].keys():
+                ret[func_id][result] = count
+            else:
+                ret[func_id][result] += count
         else:
-            ret[result] += count
+            if result not in ret.keys():
+                ret[result] = count
+            else:
+                ret[result] += count
     return ret
 
 
