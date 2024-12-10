@@ -118,9 +118,8 @@ def get_test_cycle_for_test_milestone(test_milestone_id, test_scenario, group_id
     ]
     if group_id is not None:
         filter_list.append(MantisTestCycle.test_group == group_id)
-    cycles = mantis_db.session.query(
-        MantisTestCycle.test_group, MantisTestCycle.free_test_item, MantisFilterRecord.filter_config
-    ).json(
+    query_list = [MantisTestCycle.test_group, MantisTestCycle.free_test_item, MantisFilterRecord.filter_config]
+    cycles = mantis_db.session.query(*query_list).json(
         MantisFilterRecord, MantisTestCycle.filter_id == MantisFilterRecord.id, isouter=True
     ).filter(*filter_list).all()
     return cycles
@@ -133,10 +132,7 @@ def get_case_current_result(filter_config, query_type=None):
     common_query_list = [func.max(cr_alias.c.test_result), func.count(1).label('count')]
     if query_type == 'func':
         common_query_list = [func.max(TestCase.function)] + common_query_list
-    result_number = mantis_db.session.query(
-        # func.max(cr_alias.c.test_result), func.count(1).label('count')
-        *common_query_list
-    ).join(
+    result_number = mantis_db.session.query(*common_query_list).join(
         cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
     ).filter(*filter_list).group_by(cr_alias.c.test_result).all()
     ret = {}
