@@ -6,7 +6,8 @@ from sqlalchemy.sql import func
 
 from common_tools.tools import create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, \
     conditional_filter
-from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id
+from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
+    get_case_current_result
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
 from mantis.models.mantis_test_milestone_cycle import MantisTestCycle
@@ -87,3 +88,25 @@ def generate_test_cycle_tool(current_time, mtc):
 def mantis_delete_test_cycle_tool(request_params):
     MantisTestCycle.query.filter(MantisTestCycle.id == request_params.get('id')).delete()
     mantis_db.session.commit()
+
+
+def mantis_get_test_cycle_insight_graph_tool(params_dict):
+    mtc = get_test_cycle_join_filter_record(params_dict.get('id'))
+    ret = get_case_current_result(mtc.filter_config, query_type=params_dict.get('query_type'))
+    return ret
+
+
+def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
+    # TODO
+    mtc = get_test_cycle_join_filter_record(params_dict.get('id'))
+    ret = get_case_current_result(mtc.filter_config, query_type=params_dict.get('query_type'))
+    return ret
+
+
+def get_test_cycle_join_filter_record(cycle_id):
+    filter_list = [MantisTestCycle.id == cycle_id]
+    query_list = [MantisTestCycle.test_scenario, MantisFilterRecord.filter_config]
+    mtc = mantis_db.session.query(*query_list).json(
+        MantisFilterRecord, MantisTestCycle.filter_id == MantisFilterRecord.id, isouter=True
+    ).filter(*filter_list).first()
+    return mtc

@@ -47,7 +47,7 @@ def mantis_get_delete_milestone():
 @swag_from('../mantis_swag_yaml/mantis_get_test_milestone_insight_graph.yml')
 @test_milestone_blueprint.route('/mantis/get/test/milestone/insight/graph', methods=['GET'])
 def mantis_get_test_milestone_insight_graph():
-    ret = get_test_milestone_insight_graph_tool(request.json)
+    ret = get_test_milestone_insight_graph_tool(request.args)
     resp = response(200, ret)
     return jsonify(resp)
 
@@ -55,6 +55,6 @@ def mantis_get_test_milestone_insight_graph():
 @swag_from('../mantis_swag_yaml/mantis_get_test_milestone_group_graph.yml')
 @test_milestone_blueprint.route('/mantis/get/test/milestone/group/graph', methods=['GET'])
 def mantis_get_test_milestone_group_graph():
-    ret = get_test_milestone_group_graph_tool(request.json)
+    ret = get_test_milestone_group_graph_tool(request.args)
     resp = response(200, ret)
     return jsonify(resp)

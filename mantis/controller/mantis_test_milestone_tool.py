@@ -102,7 +102,7 @@ def get_test_milestone_group_graph_tool(params_dict):
             for func_id, result_count in get_case_current_result(cycle.filter_config).items():
                 if func_id not in insight.keys():
                     insight[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-                insight[func_id] = dict(insight[func_id] + Counter(result_count))
+                insight[func_id] = dict(Counter(insight[func_id]) + Counter(result_count))
         elif params_dict.get('test_scenario') == 2:
             for tester in cycle.free_test_item.keys():
                 if cycle.free_test_item not in insight.keys():
@@ -130,19 +130,24 @@ def get_case_current_result(filter_config, query_type=None):
     subquery = mantis_db.session.query(CaseResult.m_id, CaseResult.test_result).subquery()
     cr_alias = aliased(subquery, name='cr')
     common_query_list = [func.max(cr_alias.c.test_result), func.count(1).label('count')]
-    if query_type == 'func':
-        common_query_list = [func.max(TestCase.function)] + common_query_list
+    group_list = [cr_alias.c.test_result]
+    if query_type == 'function':
+        common_query_list = [func.max(getattr(TestCase, query_type))] + common_query_list
+        group_list = [getattr(TestCase, query_type)] + group_list
+    elif query_type == 'tester':
+        common_query_list = [getattr(CaseResult, query_type)] + common_query_list
+        group_list = [getattr(CaseResult, query_type)] + group_list
     result_number = mantis_db.session.query(*common_query_list).join(
         cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
-    ).filter(*filter_list).group_by(cr_alias.c.test_result).all()
+    ).filter(*filter_list).group_by(*group_list).all()
     ret = {}
     for row in result_number:
         result, count = row.test_result if row.test_result is not None else 4, row.count
-        if query_type == 'func':
-            func_id = row.function
-            if func_id not in ret.keys():
-                ret[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-            ret[func_id][result] = count if result not in ret[func_id].keys() else ret[func_id][result] + count
+        if query_type:
+            key = getattr(row, query_type)
+            if key not in ret.keys():
+                ret[key] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+            ret[key][result] = count if result not in ret[key].keys() else ret[key][result] + count
         else:
             ret[result] = count if result not in ret.keys() else ret[result] + count
     return ret
