@@ -1,0 +1,59 @@
+tags:
+  - MANTIS case相关接口
+summary:
+  - 结果插入、更新
+description:
+  结果插入、更新
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 结果插入、更新
+      properties:
+        mode:
+          type: string
+          example: 'insert/update'
+        aug_data:
+          type: array
+          example: [
+            {
+              "M-ID": 0,
+              "Result": "Passed/Fail",
+              "Cluster": "",
+              "Test Market": "",
+              "Test Carline": "",
+              "Test Variant": "",
+              "SW Ver.": "",
+              "Test Platform": "NULL",
+              "Test Lang.": "NULL",
+              "Test Env": "Bench",
+              "Comments": "Automation Test",
+              "Execution ID": "",
+              "Execution URL": "",
+              "Automation Task ID": 0,
+              "Plan Name": "",
+              "Executor": "",
+              "Start Time": "",
+              "End Time": ""
+            }
+          ]
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }
+  10007:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10007,
+          msg: The key is incorrect,
+        }

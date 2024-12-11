@@ -9,7 +9,7 @@ from mantis.controller.mantis_case_tool import get_digital_map_case_func, edit_c
     update_digital_map_case_func, delete_case_func, get_case_func, download_file, upload_file_func, \
     mantis_create_filter_config_tool, mantis_edit_filter_config_tool, mantis_delete_filter_config_tool, \
     mantis_get_filter_config_tool, get_case_result_tool, mantis_get_sw_tool, mantis_generate_case_format_string_tool, \
-    edit_case_result_func, create_case_result_func
+    edit_case_result_func, create_case_result_func, case_result_aug_func
 from mantis.mantis_status.status_code import response
 
 case_blueprint = Blueprint('case', __name__)
@@ -162,3 +162,10 @@ def mantis_create_case_result():
 def mantis_edit_case_result():
     edit_case_result_func(request.json)
     return response(200)
+
+
+@swag_from('../mantis_swag_yaml/mantis_case_result_aug.yml')
+@case_blueprint.route('/mantis/case/result/aug', methods=['POST'])
+def mantis_case_result_aug():
+    code, ret = case_result_aug_func(request.json)
+    return response(code, ret)

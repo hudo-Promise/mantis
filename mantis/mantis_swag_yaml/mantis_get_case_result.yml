@@ -17,11 +17,12 @@ parameters:
         page_num:
           type: integer
           example: 1
-        title:
+        param:
           type: string
-        m_id:
-          type: integer
-          example: 1
+          example: xxx
+        value:
+          type: string
+          example: xxx
         sub_function:
           type: array
           example: []
@@ -30,6 +31,12 @@ parameters:
           example: []
         cluster:
           type: integer
+        category:
+          type: array
+          example: []
+        level:
+          type: array
+          example: []
         test_platform:
           type: array
           example: []
@@ -55,7 +62,7 @@ parameters:
           type: array
           example: []
         test_sw:
-          type: string
+          type: array
           example: []
 
 

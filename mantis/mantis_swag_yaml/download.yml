@@ -21,7 +21,10 @@ parameters:
           example: xxx
         mode:
           type: string
-          example: xxx
+          example: case/result
+        without_null:
+          type: bool
+          example: true
         case_id:
           type: array
           example: []
@@ -56,6 +59,9 @@ parameters:
           type: array
           example: []
         available_environment:
+          type: array
+          example: []
+        test_sw:
           type: array
           example: []
         test_platform:

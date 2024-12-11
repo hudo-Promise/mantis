@@ -1,5 +1,6 @@
 import datetime
 import logging
+from config.rs_256_keys import RS_256_PUBLIC_KEY_DICT
 import os
 
 SERVICE_IP = '127.0.0.1'
@@ -10,6 +11,9 @@ LOG_PATH = os.path.join(BASE_DIR, 'logs')
 SERVICE_MODE = 'product'
 VERSION = 'v1.0.0'
 TIMEOUT = 48 * 3600
+TOKEN_EXP = 12 * 3600
+TOKEN_NAME = 'token'
+TOKEN_MD5 = f'{TOKEN_NAME}_md5'
 PASSWORD = 'Auditaee11..2021'
 FORMAT_DATE = '%Y-%m-%d'
 FORMAT_DATETIME = '%Y-%m-%d %H:%M:%S'
@@ -21,14 +25,13 @@ HOST_DICT = {
 }
 HOST = HOST_DICT.get(SERVICE_MODE)
 
-
 SECRET_KEY_DICT = {
     'product': 'audi--product--TPmi4aLWRbyVq8zu9v82dWYW1',
     'develop': 'audi--develop--TPmi4aLWRbyVq8zu9v82dWYW1',
     'testing': 'audi--testing--TPmi4aLWRbyVq8zu9v82dWYW1'
 }
 SECRET_KEY = SECRET_KEY_DICT.get(SERVICE_MODE)
-
+PUBLIC_KEY = RS_256_PUBLIC_KEY_DICT.get(SERVICE_MODE)
 
 SERVICE_PORT_DICT = {
     'product': 10051,
@@ -36,7 +39,6 @@ SERVICE_PORT_DICT = {
     'testing': 10053
 }
 SERVICE_PORT = SERVICE_PORT_DICT.get(SERVICE_MODE)
-
 
 LOGIN_FREE_VERIFICATION = [
     '/v1.0.0/tms/user/login',
@@ -59,11 +61,9 @@ LOGIN_FREE_VERIFICATION = [
     '/v1.0.0/tms/get/remote/addr'
 ]
 
-
 db_dict = {
     'mantis': 'mantis_db',
 }
-
 
 mysql_port_dict = {
     'product': 33061,
@@ -101,6 +101,14 @@ redis_config = {
     'max_connections': 100
 }
 
+redis_blacklist_config = {
+    'host': HOST,
+    'port': REDIS_PORT,
+    'db': 1,
+    'password': PASSWORD,
+    'decode_responses': True,
+    'max_connections': 100
+}
 
 # AOS CONFIG
 AOS_SERVICE_PORT_DICT = {
@@ -148,10 +156,10 @@ class InstanceConfig(BaseConfig):
             "specs": [
                 {
                     "endpoint": 'apispec_2',
-                    "route": '/apispecification.json',
+                    "route": f'{base_path}/apispecification.json',
                 }
             ],
-            "static_url_path": "/flasgger_static",
+            "static_url_path": f'{base_path}/flasgger_static',
             "swagger_ui": True,
             "specs_route": f"{base_path}/v1.0.0/doc",
             # "basePath": base_path
@@ -160,9 +168,9 @@ class InstanceConfig(BaseConfig):
     @classmethod
     def template_config(cls, title):
         return {
-          "info": {
-            "title": f"{title} SYSTEM API",
-            "description": f"{title} SYSTEM",
-            "version": VERSION
-          }
+            "info": {
+                "title": f"{title} SYSTEM API",
+                "description": f"{title} SYSTEM",
+                "version": VERSION
+            }
         }

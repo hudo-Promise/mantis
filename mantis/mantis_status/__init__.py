@@ -91,25 +91,85 @@ case_col = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 28]
 case_result_col = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31]
 
 unique_col = [
-    'test_sw', 'test_platform', 'test_carline', 'test_variant', 'test_market', 'test_language', 'test_environment'
+    'test_sw',
+    'test_platform',
+    'test_carline',
+    'test_variant',
+    'test_market',
+    'test_language',
+    'test_environment'
 ]
 
 
 table_head = [
-    'M-ID', 'Category', 'Function', 'Sub Function', 'Fuli ID', 'Level', 'Cluster', 'Available Platform',
-    'Available Carline', 'Available Variant', 'Available Market', 'Available Language', 'Available Environment',
-    'Test Case Description/Title', 'Precondition', 'Action', 'Expectation', 'Test SW', 'Test Result', 'Test Platform',
-    'Test Carline', 'Test Variant', 'Test Market', 'Test Language', 'Test Environment', 'TB Type', 'Issue Descr',
-    'Comments', 'Reference Spec', 'Extra 1', 'Extra 2', 'Extra 3'
+    'M-ID',
+    'Category',
+    'Function',
+    'Sub Function',
+    'Fuli ID',
+    'Level',
+    'Cluster',
+    'Available Platform',
+    'Available Carline',
+    'Available Variant',
+    'Available Market',
+    'Available Language',
+    'Available Environment',
+    'Test Case Description/Title',
+    'Precondition',
+    'Action',
+    'Expectation',
+    'Test SW',
+    'Test Result',
+    'Test Platform',
+    'Test Carline',
+    'Test Variant',
+    'Test Market',
+    'Test Language',
+    'Test Environment',
+    'TB Type',
+    'Issue Descr',
+    'Comments',
+    'Reference Spec',
+    'Extra 1',
+    'Extra 2',
+    'Extra 3'
 ]  # len == 32
 
 
 key_list = [
-    'm_id', 'category', 'function', 'sub_function', 'fuLi_value', 'level', 'cluster', 'available_platform',
-    'available_carline', 'available_variant', 'available_market', 'available_language', 'available_environment',
-    'title', 'precondition', 'action', 'expectation', 'test_sw', 'test_result', 'test_platform', 'test_carline',
-    'test_variant', 'test_market', 'test_language', 'test_environment', 'tb_type', 'issue_descr', 'comments',
-    'reference_spec', 'extra_1', 'extra_2', 'extra_3'
+    'm_id',
+    'category',
+    'function',
+    'sub_function',
+    'fuLi_value',
+    'level',
+    'cluster',
+    'available_platform',
+    'available_carline',
+    'available_variant',
+    'available_market',
+    'available_language',
+    'available_environment',
+    'title',
+    'precondition',
+    'action',
+    'expectation',
+    'test_sw',
+    'test_result',
+    'test_platform',
+    'test_carline',
+    'test_variant',
+    'test_market',
+    'test_language',
+    'test_environment',
+    'tb_type',
+    'issue_descr',
+    'comments',
+    'reference_spec',
+    'extra_1',
+    'extra_2',
+    'extra_3'
 ]
 
 
@@ -138,34 +198,105 @@ user_operate_record_url_list = [
 ]
 
 
-field_display_order = [
-    'cluster', 'category', 'level', 'test_result', 'tb_type', 'available_platform', 'test_platform',
-    'available_carline', 'test_carline', 'available_variant', 'test_variant', 'available_market', 'test_market',
-    'available_language', 'test_language', 'available_environment', 'test_environment'
-]
+field_display_order = {
+    'case': [
+        'category',
+        'level',
+        'available_platform',
+        'available_carline',
+        'available_variant',
+        'available_market',
+        'available_language',
+        'available_environment'
+    ],
+    'result': [
+        'category',
+        'level',
+        'test_result',
+        'tb_type',
+        'test_platform',
+        'test_carline',
+        'test_variant',
+        'test_market',
+        'test_language',
+        'test_environment'
+    ]
+}
 
 
 test_case_key = [
-    'case_id', 'category', 'sub_function', 'level', 'available_platform', 'available_carline', 'available_variant',
-    'available_market', 'available_language', 'available_environment', 'fuLi_value'
+    'case_id',
+    'category',
+    'sub_function',
+    'level',
+    'available_platform',
+    'available_carline',
+    'available_variant',
+    'available_market',
+    'available_language',
+    'available_environment',
+    'fuLi_value'
 ]
 
 
-test_case_param = ['m_id', 'title', 'precondition', 'action', 'expectation']
+test_case_param = [
+    'm_id',
+    'title',
+    'precondition',
+    'action',
+    'expectation'
+]
 
 
 case_result_key = [
-    'test_variant', 'test_carline', 'test_market', 'test_platform', 'test_language', 'test_environment', 'test_sw',
-    'test_result', 'tb_type', 'issue_descr', 'comments', 'extra_1', 'extra_2', 'extra_3'
+    'test_variant',
+    'test_carline',
+    'test_market',
+    'test_platform',
+    'test_language',
+    'test_environment',
+    'test_sw',
+    'test_result',
+    'tb_type',
+    'issue_descr',
+    'comments',
+    'extra_1',
+    'extra_2',
+    'extra_3'
 ]
 
 
-case_result_param = ['test_sw', 'issue_descr', 'comments']
+case_result_param = [
+    'test_sw',
+    'issue_descr',
+    'comments'
+]
 
 
-test_status = {
+milestone_status = {
+    1: 'To Do',
+    2: 'In Progress',
+    3: 'Done',
+}
+
+
+cycle_status = {
+    1: 'To Do',
+    2: 'In Queue',
+    3: 'In Progress',
+    4: 'Done',
+}
+
+free_test_status = {
     1: 'Open',
     2: 'In Progress',
-    3: 'Finished',
-    4: 'Delay',
+    3: 'Test OK',
+    4: 'Test NOK',
+    5: 'Test Blocked'
+}
+
+label_mapping = {
+    1: 'Risk',
+    2: 'Delay',
+    3: 'Normal'
 }

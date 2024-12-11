@@ -305,5 +305,46 @@ create_mantis_filter_record_sql = """
     `visibility_level`      int null comment '能见度  0 private 1 public',
     `create_time`           datetime null comment '创建时间',
     `update_time`           datetime null comment '更新时间'
-)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4;
+"""
+
+
+create_mantis_test_milestone_sql = """
+    create table if not exists `mantis_test_milestone`
+(
+    `id`                int auto_increment comment '主键' primary key,
+    `name`              varchar(64) null comment 'test milestone name',
+    `description`       text null comment '描述',
+    `project`           int null comment '项目',
+    `cluster`           int null comment '集群',
+    `status`            int null comment '状态',
+    `start_date`        varchar(16) null comment '开始日期',
+    `due_date`          varchar(16) null comment '截至日期',
+    `create_time`       datetime null comment '创建时间',
+    `update_time`       datetime null comment '更新时间'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4;
+"""
+
+
+create_mantis_test_cycle_sql = """
+    create table if not exists `mantis_test_cycle`
+(
+    `id`                    int auto_increment comment '主键' primary key,
+    `name`                  varchar(64) null comment 'test cycle name',
+    `test_group`            int null comment '测试组',
+    `linked_milestone`      int null comment '所属 test milestone',
+    `project`               int null comment '项目',
+    `cluster`               int null comment '集群',
+    `market`                json null comment '市场',
+    `start_date`            varchar(16) null comment '开始日期',
+    `due_date`              varchar(16) null comment '截至日期',
+    `actual_finish_date`    varchar(16) null comment '实际完成日期',
+    `description`           text null comment '描述',
+    `filter_id`             int null comment 'filter config',
+    `test_scenario`         int null comment '类型 1 test case 2 free test',
+    `free_test_item`        json null comment '测试人员记录',
+    `status`                int null comment '状态',
+    `create_time`           datetime null comment '创建时间',
+    `update_time`           datetime null comment '更新时间'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4;
 """

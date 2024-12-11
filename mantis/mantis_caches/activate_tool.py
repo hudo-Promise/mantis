@@ -177,6 +177,16 @@ def activate_case_result(curr):
     return result, exists_result
 
 
+def activate_case_result_aug(curr):
+    case_result_sql = """
+        select `id`, `aug_task_id` from case_result
+    """
+    curr.execute(case_result_sql)
+    case_results = curr.fetchall()
+    aug_id_mapping = {case_result.get('aug_task_id'): case_result.get('id') for case_result in case_results}
+    return aug_id_mapping
+
+
 def activate_single_case_result(curr, case_id):
     case_result_sql = """
         select 

@@ -33,7 +33,8 @@ status_code_massage = {
     10012: 'unknown error',
     10013: 'Delete failed',
     10014: 'Invalid number of columns or invalid cell values',
-    10015: 'The data is being calculated'
+    10015: 'The data is being calculated',
+    10016: 'Invalid result',
 }
 """
     200: '执行成功',
