@@ -97,7 +97,6 @@ def mantis_get_test_cycle_insight_graph_tool(params_dict):
 
 
 def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
-    # TODO
     mtc = get_test_cycle_join_filter_record(params_dict.get('id'))
     ret = get_case_current_result(mtc.filter_config, query_type=params_dict.get('query_type'))
     return ret
