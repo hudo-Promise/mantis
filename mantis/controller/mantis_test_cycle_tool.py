@@ -1,3 +1,5 @@
+import time
+
 from sqlalchemy.sql import func
 
 from common_tools.tools import create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish
@@ -110,4 +112,26 @@ def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
 def mantis_get_test_cycle_pie_chart_tool(params_dict):
     mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
     ret = get_case_current_result(mtc.filter_config, mtc.id)
+    return ret
+
+
+def mantis_test_cycle_work_report_tool():
+    year = time.localtime().tm_year
+    start_time = f'{year}-01-01 00:00:00'
+    end_time = f'{year}-12-31 23:59:59'
+    rows = mantis_db.session.query(
+        CaseResult.tester,
+        func.date_format(CaseResult.upgrade_time, '%Y-%m').label('upgrade_time'),
+        func.count(0).label('count')
+    ).filter(
+        CaseResult.upgrade_time >= start_time,
+        CaseResult.upgrade_time <= end_time,
+        CaseResult.cycle_id != 0
+    ).group_by(CaseResult.tester, func.date_format(CaseResult.upgrade_time, '%Y-%m')).all()
+    ret = {}
+    for row in rows:
+        if row.tester not in ret.keys():
+            ret[row.tester] = {}
+        if row.upgrade_time not in ret[row.tester].keys():
+            ret[row.tester][row.upgrade_time] = row.count
     return ret

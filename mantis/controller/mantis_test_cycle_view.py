@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, request
 
 from mantis.controller.mantis_test_cycle_tool import mantis_create_test_cycle_tool, mantis_edit_test_cycle_tool, \
     mantis_get_test_cycle_tool, mantis_delete_test_cycle_tool, mantis_get_test_cycle_insight_graph_tool, \
-    mantis_get_test_cycle_burnout_diagram_tool, mantis_get_test_cycle_pie_chart_tool
+    mantis_get_test_cycle_burnout_diagram_tool, mantis_get_test_cycle_pie_chart_tool, mantis_test_cycle_work_report_tool
 from mantis.mantis_status.status_code import response
 
 
@@ -64,5 +64,13 @@ def mantis_get_test_cycle_burnout_diagram():
 @test_cycle_blueprint.route('/mantis/get/test/cycle/pie/chart', methods=['GET'])
 def mantis_get_test_cycle_pie_chart():
     ret = mantis_get_test_cycle_pie_chart_tool(request.args)
+    resp = response(200, ret)
+    return jsonify(resp)
+
+
+@swag_from('../mantis_swag_yaml/mantis_get_test_cycle_work_report.yml')
+@test_cycle_blueprint.route('/mantis/get/test/cycle/work_report', methods=['GET'])
+def mantis_test_cycle_work_report():
+    ret = mantis_test_cycle_work_report_tool()
     resp = response(200, ret)
     return jsonify(resp)

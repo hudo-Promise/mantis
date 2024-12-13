@@ -1,4 +1,3 @@
-import time
 from collections import Counter
 
 from sqlalchemy import func, or_, and_
@@ -194,24 +193,3 @@ def parse_case_filter_config(filter_config):
         else:
             conditional_filter(filter_list, case_column_dict.get(key), values)
     return filter_list
-
-
-def mantis_test_milestone_work_report_tool():
-    year = time.localtime().tm_year
-    start_time = f'{year}-01-01 00:00:00'
-    end_time = f'{year}-12-31 23:59:59'
-    rows = mantis_db.session.query(
-        CaseResult.tester,
-        func.date_format(CaseResult.upgrade_time, '%Y-%m').label('upgrade_time'),
-        func.count(0).label('count')
-    ).filter(
-        CaseResult.upgrade_time >= start_time,
-        CaseResult.upgrade_time <= end_time,
-    ).group_by(CaseResult.tester, func.date_format(CaseResult.upgrade_time, '%Y-%m')).all()
-    ret = {}
-    for row in rows:
-        if row.tester not in ret.keys():
-            ret[row.tester] = {}
-        if row.upgrade_time not in ret[row.tester].keys():
-            ret[row.tester][row.upgrade_time] = row.count
-    return ret

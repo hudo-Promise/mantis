@@ -1,0 +1,29 @@
+tags:
+  - MANTIS Test Cycle 相关接口
+summary:
+  - 查询 Test Cycle work report 图数据
+description:
+    查询 Test Cycle work report 图数据
+
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": null,
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }
