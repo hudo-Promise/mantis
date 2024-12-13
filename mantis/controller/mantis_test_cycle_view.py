@@ -45,7 +45,7 @@ def mantis_delete_test_cycle():
 
 
 @swag_from('../mantis_swag_yaml/mantis_get_test_cycle_insight_graph.yml')
-@test_cycle_blueprint.route('/mantis/delete/test/cycle', methods=['GET'])
+@test_cycle_blueprint.route('/mantis/get/test/cycle/insight/graph', methods=['GET'])
 def mantis_get_test_cycle_insight_graph():
     ret = mantis_get_test_cycle_insight_graph_tool(request.args)
     resp = response(200, ret)
