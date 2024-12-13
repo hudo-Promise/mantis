@@ -35,7 +35,10 @@ parameters:
               "Plan Name": "",
               "Executor": "",
               "Start Time": "",
-              "End Time": ""
+              "End Time": "",
+              "Extra1": "",
+              "Extra2": "",
+              "Extra3": "",
             }
           ]
 responses:
