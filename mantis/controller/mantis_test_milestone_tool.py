@@ -1,3 +1,4 @@
+import time
 from collections import Counter
 
 from sqlalchemy import func, or_, and_
@@ -80,26 +81,34 @@ def get_test_milestone_by_id(test_milestone_id):
 
 
 def get_test_milestone_insight_graph_tool(params_dict):
-    cycles = get_test_cycle_for_test_milestone(params_dict.get('linked_milestone'), params_dict.get('test_scenario'))
+    cycles = get_test_cycle_for_graph(
+        {
+            'linked_milestone': params_dict.get('linked_milestone'),
+            'test_scenario': params_dict.get('test_scenario'),
+        }
+    )
     insight = {}
     for cycle in cycles:
         if cycle.test_group not in insight.keys():
             insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-        for result_id, result_count in get_case_current_result(cycle.filter_config).items():
-            insight[cycle.test_group] = dict(Counter(insight[cycle.test_group]) + Counter(result_count))
+        for result_id, result_count in get_case_current_result(cycle.filter_config, cycle.id).items():
+            insight[cycle.test_group] = dict(Counter(insight.get(cycle.test_group)) + Counter(result_count))
     return insight
 
 
 def get_test_milestone_group_graph_tool(params_dict):
-    cycles = get_test_cycle_for_test_milestone(
-        params_dict.get('linked_milestone'),
-        params_dict.get('test_scenario'),
-        params_dict.get('group_id'),
+    cycles = get_test_cycle_for_graph(
+        {
+            'linked_milestone': params_dict.get('linked_milestone'),
+            'test_scenario': params_dict.get('test_scenario'),
+            'group_id': params_dict.get('group_id'),
+        }
     )
     insight = {}
     for cycle in cycles:
         if params_dict.get('test_scenario') == 1:
-            for func_id, result_count in get_case_current_result(cycle.filter_config).items():
+            for func_id, result_count in get_case_current_result(
+                    cycle.filter_config, cycle.id, 'function').items():
                 if func_id not in insight.keys():
                     insight[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
                 insight[func_id] = dict(Counter(insight[func_id]) + Counter(result_count))
@@ -107,27 +116,40 @@ def get_test_milestone_group_graph_tool(params_dict):
             for tester in cycle.free_test_item.keys():
                 if cycle.free_test_item not in insight.keys():
                     insight[tester] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-                for result_id, result_count in get_case_current_result(cycle.filter_config).items():
+                for result_id, result_count in get_case_current_result(
+                        cycle.filter_config, cycle.id, 'tester').items():
                     insight[tester] = dict(insight[tester] + Counter(result_count))
     return insight
 
 
-def get_test_cycle_for_test_milestone(test_milestone_id, test_scenario, group_id=None):
-    filter_list = [
-        MantisTestCycle.linked_milestone == test_milestone_id, MantisTestCycle.test_scenario == test_scenario
+def get_test_cycle_for_graph(params_dict):
+    filter_list = [getattr(MantisTestCycle, key) == value for key, value in params_dict.items()]
+    query_list = [
+        MantisTestCycle.id,
+        MantisTestCycle.test_group,
+        MantisTestCycle.free_test_item,
+        MantisFilterRecord.filter_config
     ]
-    if group_id is not None:
-        filter_list.append(MantisTestCycle.test_group == group_id)
-    query_list = [MantisTestCycle.test_group, MantisTestCycle.free_test_item, MantisFilterRecord.filter_config]
-    cycles = mantis_db.session.query(*query_list).json(
-        MantisFilterRecord, MantisTestCycle.filter_id == MantisFilterRecord.id, isouter=True
-    ).filter(*filter_list).all()
+    if 'id' in params_dict.keys():
+        cycles = mantis_db.session.query(*query_list).json(
+            MantisFilterRecord,
+            MantisTestCycle.filter_id == MantisFilterRecord.id,
+            isouter=True
+        ).filter(*filter_list).first()
+    else:
+        cycles = mantis_db.session.query(*query_list).json(
+            MantisFilterRecord,
+            MantisTestCycle.filter_id == MantisFilterRecord.id,
+            isouter=True
+        ).filter(*filter_list).all()
     return cycles
 
 
-def get_case_current_result(filter_config, query_type=None):
+def get_case_current_result(filter_config, cycle_id, query_type=None):
     filter_list = parse_case_filter_config(filter_config)
-    subquery = mantis_db.session.query(CaseResult.m_id, CaseResult.test_result).subquery()
+    subquery = mantis_db.session.query(CaseResult.m_id, CaseResult.test_result).filter(
+        CaseResult.cycle_id == cycle_id
+    ).subquery()
     cr_alias = aliased(subquery, name='cr')
     common_query_list = [func.max(cr_alias.c.test_result), func.count(1).label('count')]
     group_list = [cr_alias.c.test_result]
@@ -172,3 +194,24 @@ def parse_case_filter_config(filter_config):
         else:
             conditional_filter(filter_list, case_column_dict.get(key), values)
     return filter_list
+
+
+def mantis_test_milestone_work_report_tool():
+    year = time.localtime().tm_year
+    start_time = f'{year}-01-01 00:00:00'
+    end_time = f'{year}-12-31 23:59:59'
+    rows = mantis_db.session.query(
+        CaseResult.tester,
+        func.date_format(CaseResult.upgrade_time, '%Y-%m').label('upgrade_time'),
+        func.count(0).label('count')
+    ).filter(
+        CaseResult.upgrade_time >= start_time,
+        CaseResult.upgrade_time <= end_time,
+    ).group_by(CaseResult.tester, func.date_format(CaseResult.upgrade_time, '%Y-%m')).all()
+    ret = {}
+    for row in rows:
+        if row.tester not in ret.keys():
+            ret[row.tester] = {}
+        if row.upgrade_time not in ret[row.tester].keys():
+            ret[row.tester][row.upgrade_time] = row.count
+    return ret

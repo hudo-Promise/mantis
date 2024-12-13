@@ -1,15 +1,10 @@
-from operator import or_
-
-from sqlalchemy import and_
-from sqlalchemy.orm import aliased
 from sqlalchemy.sql import func
 
-from common_tools.tools import create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, \
-    conditional_filter
+from common_tools.tools import create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
-    get_case_current_result
+    get_case_current_result, get_test_cycle_for_graph
 from mantis.models import mantis_db
-from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
+from mantis.models.case import TestCase, CaseResult
 from mantis.models.mantis_test_milestone_cycle import MantisTestCycle
 
 
@@ -91,21 +86,28 @@ def mantis_delete_test_cycle_tool(request_params):
 
 
 def mantis_get_test_cycle_insight_graph_tool(params_dict):
-    mtc = get_test_cycle_join_filter_record(params_dict.get('id'))
-    ret = get_case_current_result(mtc.filter_config, query_type=params_dict.get('query_type'))
+    mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
+    ret = get_case_current_result(mtc.filter_config, mtc.id, query_type=params_dict.get('query_type'))
     return ret
 
 
 def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
-    mtc = get_test_cycle_join_filter_record(params_dict.get('id'))
-    ret = get_case_current_result(mtc.filter_config, query_type=params_dict.get('query_type'))
+    mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
+    filter_list = parse_case_filter_config(mtc.filter_config)
+    case_count = TestCase.query.filter(*filter_list).count()
+    burnout_data = mantis_db.session.query(
+        func.date(CaseResult.upgrade_time).label('upgrade_date'),
+        func.count(1).label('count')
+    ).filter(CaseResult.cycle_id == mtc.id).group_by(func.date(CaseResult.upgrade_time)).all()
+    burnout_dict = {}
+    for burnout in burnout_data:
+        burnout_dict[burnout.upgrade_date] = case_count - burnout.count
+        case_count -= burnout.count
+    ret = {'case_count': case_count, 'burnout_data': burnout_dict}
     return ret
 
 
-def get_test_cycle_join_filter_record(cycle_id):
-    filter_list = [MantisTestCycle.id == cycle_id]
-    query_list = [MantisTestCycle.test_scenario, MantisFilterRecord.filter_config]
-    mtc = mantis_db.session.query(*query_list).json(
-        MantisFilterRecord, MantisTestCycle.filter_id == MantisFilterRecord.id, isouter=True
-    ).filter(*filter_list).first()
-    return mtc
+def mantis_get_test_cycle_pie_chart_tool(params_dict):
+    mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
+    ret = get_case_current_result(mtc.filter_config, mtc.id)
+    return ret
