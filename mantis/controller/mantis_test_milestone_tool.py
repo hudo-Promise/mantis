@@ -110,7 +110,7 @@ def get_test_milestone_group_graph_tool(params_dict):
                     cycle.filter_config, cycle.id, 'function').items():
                 if func_id not in insight.keys():
                     insight[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-                insight[func_id] = dict(Counter(insight[func_id]) + Counter(result_count))
+                insight[func_id] = dict(Counter(insight.get(func_id)) + Counter(result_count))
         elif params_dict.get('test_scenario') == 2:
             for tester in cycle.free_test_item.keys():
                 if cycle.free_test_item not in insight.keys():
@@ -193,3 +193,13 @@ def parse_case_filter_config(filter_config):
         else:
             conditional_filter(filter_list, case_column_dict.get(key), values)
     return filter_list
+
+
+def mantis_test_milestone_group_order_tool(params_dict):
+    cycles = mantis_db.session.query(
+        func.max(MantisTestCycle.test_group).label('test_group')
+    ).filter_by(
+        MantisTestCycle.linked_milestone == params_dict.get('linked_milestone')
+    ).group_by(MantisTestCycle.linked_milestone).order_by(MantisTestCycle.linked_milestone).all()
+    ret = [cycle.test_group for cycle in cycles]
+    return ret

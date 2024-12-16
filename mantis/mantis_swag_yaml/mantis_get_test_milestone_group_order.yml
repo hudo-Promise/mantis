@@ -1,0 +1,34 @@
+tags:
+  - MANTIS Test Milestone 相关接口
+summary:
+  - 查询 Test Milestone test group 图数据
+description:
+    查询 Test Milestone test group 图数据
+
+parameters:
+  - name: linked_milestone
+    in: query
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          "code": 200,
+          "data": null,
+          "msg": "Execute succeeded"
+        }
+  404:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 404,
+          msg: The current page does not exist,
+        }
