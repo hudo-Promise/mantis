@@ -1,3 +1,4 @@
+import calendar
 import datetime
 import hashlib
 import time
@@ -152,3 +153,10 @@ def update_tool(update_dict, params, update_key, mtc):
 
 def calculate_time_to_finish(user_time, percent):
     return round((user_time / percent) * (1 - percent))
+
+
+def get_first_and_last_day(year, month):
+    week_day, month_count_day = calendar.monthrange(year, month)
+    first_day = datetime.date(year, month, day=1)
+    last_day = datetime.date(year, month, day=month_count_day)
+    return first_day.strftime(f"{FORMAT_DATE}"), last_day.strftime(f"{FORMAT_DATE}")

@@ -1,10 +1,11 @@
+import time
 from collections import Counter
 
 from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import aliased
 
 from common_tools.tools import create_current_format_time, get_gap_days, update_tool, calculate_time_to_finish, \
-    conditional_filter
+    conditional_filter, generate_week, get_first_and_last_day
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
 from mantis.models.mantis_test_milestone_cycle import MantisTestMileStone, MantisTestCycle
@@ -41,6 +42,31 @@ def mantis_get_test_milestone_tool(request_params):
     current_time = create_current_format_time()
     mtms = MantisTestMileStone.query.filter(MantisTestMileStone.cluster == request_params.get('cluster')).all()
     return list(map(lambda mtm: generate_test_milestone_tool(current_time, mtm), mtms))
+
+
+def mantis_get_test_milestone_time_table_tool():
+    year, month, day = time.localtime().tm_year, time.localtime().tm_mon, time.localtime().tm_mday
+    week = generate_week(f'{year}-{month}-{day}')
+    left_day, _ = get_first_and_last_day(year if month != 1 else year - 1, month - 1 if month != 1 else 12)
+    _, right_day = get_first_and_last_day(year if month != 12 else year + 1, month + 1 if month != 12 else 1)
+    time_node = {
+        'left_node': f'{year if month != 1 else year - 1}-{generate_week(left_day)}',
+        'middle_node': f'{year}-{week}',
+        'right_node': f'{year if month != 12 else year + 1}-{generate_week(right_day)}'
+    }
+
+    week_list = []
+    for i in range(week, 53):
+        week_list.append(f'{year - 1}-{i}')
+    for i in range(1, 53):
+        week_list.append(f'{year}-{i}')
+    for i in range(1, week + 1):
+        week_list.append(f'{year + 1}-{i}')
+    ret = {
+        'week': week_list,
+        'time_node': time_node,
+    }
+    return ret
 
 
 def generate_test_milestone_tool(current_time, mtm):
