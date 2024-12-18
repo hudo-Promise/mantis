@@ -23,7 +23,6 @@ def mantis_create_test_milestone_tool(request_params):
         due_date=request_params.get('due_date'),
         create_time=current_time,
         update_time=current_time,
-        delete_flag=0
     )
     mantis_db.session.add(mtm)
     mantis_db.session.commit()
@@ -85,7 +84,6 @@ def generate_test_milestone_tool(current_time, mtm):
         ),  # TODO
         'create_time': str(mtm.create_time),
         'update_time': str(mtm.update_time),
-        'delete_flag': mtm.delete_flag
     }
 
 

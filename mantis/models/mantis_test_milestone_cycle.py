@@ -13,7 +13,6 @@ class MantisTestMileStone(mantis_db.Model):
     due_date = mantis_db.Column(mantis_db.String(16), nullable=True, comment='截至日期')
     create_time = mantis_db.Column(mantis_db.DateTime, nullable=False, comment='创建时间')
     update_time = mantis_db.Column(mantis_db.DateTime, nullable=False, comment='更新时间')
-    delete_flag = mantis_db.Column(mantis_db.Integer, nullable=False, comment='0 未删除 1 删除')
 
 
 class MantisTestCycle(mantis_db.Model):

@@ -32,7 +32,7 @@ def mantis_edit_test_milestone():
 @swag_from('../mantis_swag_yaml/mantis_get_test_milestone.yml')
 @test_milestone_blueprint.route('/mantis/get/test/milestone', methods=['GET'])
 def mantis_get_test_milestone():
-    ret = mantis_get_test_milestone_tool(request.json)
+    ret = mantis_get_test_milestone_tool(request.args)
     resp = response(200, ret)
     return jsonify(resp)
 
