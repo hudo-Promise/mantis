@@ -17,7 +17,7 @@ from mantis.mantis_tool.mantis_middleware import mantis_middleware_blueprint
 
 
 def init_bp(app):
-    init_free_log(app)
+    # init_free_log(app)
     app.register_blueprint(middleware_blueprint)
     app.register_blueprint(mantis_middleware_blueprint)
     app.register_blueprint(card_blueprint, url_prefix=f'{MANTIS_API}/{VERSION}/')
