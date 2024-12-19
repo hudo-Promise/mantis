@@ -68,6 +68,14 @@ def mantis_get_test_milestone_time_table_tool():
 
 
 def generate_test_milestone_tool(current_time, mtm):
+
+    start_year, due_year = mtm.start_date[:4], mtm.due_date[:4]
+    start_week, due_week = generate_week_str(mtm.start_date), generate_week_str(mtm.due_date)
+    if mtm.start_date[5:7] == '12' and start_week == '01':
+        start_year = str(int(start_year) + 1)
+    if mtm.due_date[5:7] == '12' and due_week == '01':
+        due_year = str(int(due_year) + 1)
+
     mtm = {
         'id': mtm.id,
         'name': mtm.name,
@@ -76,9 +84,9 @@ def generate_test_milestone_tool(current_time, mtm):
         'cluster': mtm.cluster,
         'status': mtm.status,
         'start_date': mtm.start_date,
-        'start_week': f'{mtm.start_date[:4]}-{generate_week_str(mtm.start_date)}',
+        'start_week': f'{start_year}-{generate_week_str(mtm.start_date)}',
         'due_date': mtm.due_date,
-        'due_week': f'{mtm.due_date[:4]}-{generate_week_str(mtm.due_date)}',
+        'due_week': f'{due_year}-{generate_week_str(mtm.due_date)}',
         'time_left': get_gap_days(current_time, f'{mtm.due_date} 00:00:00') + 1,
         'time_to_finish': calculate_time_to_finish(
             get_gap_days(f'{mtm.start_date} 00:00:00', current_time) + 1,

@@ -76,6 +76,7 @@ def generate_week_str(date_str=None):
     week_num = generate_week(date_str)
     return str(week_num) if len(str(week_num)) == 2 else f'0{week_num}'
 
+
 def generate_year(date_str):
     if date_str:
         if int(generate_week(date_str)) > 50 and int(date_str[5:7]) < 2:
