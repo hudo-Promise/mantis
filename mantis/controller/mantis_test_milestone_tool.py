@@ -68,7 +68,7 @@ def mantis_get_test_milestone_time_table_tool():
 
 
 def generate_test_milestone_tool(current_time, mtm):
-    return {
+    mtm = {
         'id': mtm.id,
         'name': mtm.name,
         'description': mtm.description,
@@ -76,7 +76,9 @@ def generate_test_milestone_tool(current_time, mtm):
         'cluster': mtm.cluster,
         'status': mtm.status,
         'start_date': mtm.start_date,
+        'start_week': f'{mtm.start_date[:4]}-{generate_week_str(mtm.start_date)}',
         'due_date': mtm.due_date,
+        'due_week': f'{mtm.due_date[:4]}-{generate_week_str(mtm.due_date)}',
         'time_left': get_gap_days(current_time, f'{mtm.due_date} 00:00:00') + 1,
         'time_to_finish': calculate_time_to_finish(
             get_gap_days(f'{mtm.start_date} 00:00:00', current_time) + 1,
@@ -85,6 +87,7 @@ def generate_test_milestone_tool(current_time, mtm):
         'create_time': str(mtm.create_time),
         'update_time': str(mtm.update_time),
     }
+    return mtm
 
 
 def mantis_delete_test_milestone_tool(request_params):
