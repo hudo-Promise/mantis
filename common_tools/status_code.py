@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 class ResponseStruct(object):
-    def __init__(self, code, data=None, msg=None):
+    def __init__(self, code, data=None):
         self.code = code
         self.data = data
-        self.msg = msg
 
     def generate(self):
-        result = {"code": self.code, "msg": status_code_massage.get(self.code), "data": self.data}
-        if self.msg:
-            result["msg"] = self.msg
+        result = {"code": self.code, "msg": status_code_massage[self.code], "data": self.data}
         return result
 
 
-def response(code, data=None, msg=None):
-    rs = ResponseStruct(code, data, msg)
+def response(code, data=None):
+    rs = ResponseStruct(code, data)
     return rs.generate()
 
 
