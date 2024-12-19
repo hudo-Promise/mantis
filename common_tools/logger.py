@@ -47,6 +47,11 @@ class InitLog(object):
         custom_logger.setLevel(self.log_level.get(SERVICE_MODE))
         for handler in handlers:
             custom_logger.addHandler(handler)
+        console_handler = logging.StreamHandler()
+        console_handler.name = "console"
+        console_handler.setLevel(logging.DEBUG)
+        console_handler.setFormatter(self.formatter)
+        custom_logger.addHandler(console_handler)
         return custom_logger
 
     def create_log(self):
