@@ -174,8 +174,13 @@ key_list = [
 
 
 mantis_project = {
-    1: 'MIB',
-    2: 'MQB',
+    1: 'HCP3',
+    2: 'OCI@A',
+}
+
+mantis_project_to_cluster = {
+    1: [1, 4],
+    2: [6, 7, 8, 9],
 }
 
 
