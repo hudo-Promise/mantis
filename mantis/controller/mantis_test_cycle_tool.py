@@ -80,11 +80,9 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
     current_time = create_current_format_time()
     filter_list = [MantisTestCycle.linked_milestone == request_params.get('linked_milestone')]
     mtc_list = MantisTestCycle.query.filter(*filter_list).order_by(MantisTestCycle.test_group).all()
-    cycle_group = {}
+    cycle_group = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
     for mtc in mtc_list:
         cur_mtc = generate_test_cycle_tool(current_time, mtc)
-        if mtc.test_group not in cycle_group.keys():
-            cycle_group[mtc.test_group] = []
         cycle_group[mtc.test_group].append(cur_mtc)
     return cycle_group
 
