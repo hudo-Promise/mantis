@@ -347,6 +347,7 @@ create_mantis_test_cycle_sql = """
     `test_scenario`         int null comment '类型 1 test case 2 free test',
     `free_test_item`        json null comment '测试人员记录',
     `status`                int null comment '状态',
+    `progress`              int not null default 0 comment '进度',               
     `create_time`           datetime null comment '创建时间',
     `update_time`           datetime null comment '更新时间'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4;

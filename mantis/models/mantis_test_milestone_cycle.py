@@ -32,6 +32,6 @@ class MantisTestCycle(mantis_db.Model):
     test_scenario = mantis_db.Column(mantis_db.Integer, nullable=True, comment='类型 1 test case 2 free test')
     free_test_item = mantis_db.Column(mantis_db.JSON, nullable=True, comment='测试人员记录')
     status = mantis_db.Column(mantis_db.Integer, nullable=False, comment='状态')
-    progress = mantis_db.Column(mantis_db.Integer, nullable=False, comment='进度')
+    progress = mantis_db.Column(mantis_db.Integer, nullable=False, default=0, comment='进度')
     create_time = mantis_db.Column(mantis_db.DateTime, nullable=False, comment='创建时间')
     update_time = mantis_db.Column(mantis_db.DateTime, nullable=False, comment='更新时间')
