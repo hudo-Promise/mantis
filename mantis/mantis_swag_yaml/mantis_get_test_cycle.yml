@@ -10,35 +10,24 @@ parameters:
     in: body
     required: true
     schema:
-      id: 编辑 Test Cycle
+      id: 查询 Test Cycle
       properties:
         cluster:
           type: integer
           example: 1
-        test_group:
+        tester:
           type: integer
-        linked_milestone:
-          type: integer
-        market:
-          type: array
-          example: []
         start_date:
           type: string
           example: xxxx-xx-xx
         due_date:
           type: string
           example: xxxx-xx-xx
-        description:
-          type: string
-        filter_id:
-          type: integer
-        test_scenario:
-          type: integer
-        free_test_item:
-          type: array
-          example: [{tester: 1, desc: string, status: integer}]
         status:
           type: integer
+        group_by:
+          type: string
+          example: 'linked_milestone/test_scenario'
 
 
 responses:
