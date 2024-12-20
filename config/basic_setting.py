@@ -61,6 +61,24 @@ LOGIN_FREE_VERIFICATION = [
     '/v1.0.0/tms/get/remote/addr'
 ]
 
+FREE_LOG_API_DICT = {
+    'product': 'http://172.16.50.16:8210/freelog-api/create/log/record',
+    'develop': 'http://172.16.50.100:8200/freelog-dev/create/log/record',
+    'testing': 'http://172.16.50.100:8200/freelog-dev/create/log/record'
+}
+FREE_LOG_API = FREE_LOG_API_DICT.get(SERVICE_MODE)
+
+NOT_LOG_PATH = [
+    '/v1.0.0/doc',
+    '/flasgger_static/swagger-ui.css',
+    '/flasgger_static/swagger-ui-bundle.js',
+    '/flasgger_static/swagger-ui-standalone-preset.js',
+    '/flasgger_static/lib/jquery.min.js',
+    '/flasgger_static/swagger-ui.css.map',
+    '/flasgger_static/favicon-32x32.png',
+    '/apispecification.json',
+]
+
 db_dict = {
     'mantis': 'mantis_db',
 }
