@@ -5,7 +5,8 @@ from flask import Blueprint, jsonify, request
 
 from mantis.controller.mantis_test_cycle_tool import mantis_create_test_cycle_tool, mantis_edit_test_cycle_tool, \
     mantis_get_test_cycle_tool, mantis_delete_test_cycle_tool, mantis_get_test_cycle_insight_graph_tool, \
-    mantis_get_test_cycle_burnout_diagram_tool, mantis_get_test_cycle_pie_chart_tool, mantis_test_cycle_work_report_tool
+    mantis_get_test_cycle_burnout_diagram_tool, mantis_get_test_cycle_pie_chart_tool, \
+    mantis_test_cycle_work_report_tool, mantis_get_test_cycle_by_milestone_tool
 from mantis.mantis_status.status_code import response
 
 
@@ -29,10 +30,18 @@ def mantis_edit_test_cycle():
 
 
 @swag_from('../mantis_swag_yaml/mantis_get_test_cycle.yml')
-@test_cycle_blueprint.route('/mantis/get/test/cycle', methods=['GET'])
+@test_cycle_blueprint.route('/mantis/get/test/cycle', methods=['POST'])
 def mantis_get_test_cycle():
     func_dict = mantis_get_test_cycle_tool(request.json)
     resp = response(200, func_dict)
+    return jsonify(resp)
+
+
+@swag_from('../mantis_swag_yaml/mantis_get_test_cycle_by_milestone.yml')
+@test_cycle_blueprint.route('/mantis/get/test/cycle/by/milestone', methods=['GET'])
+def mantis_get_test_cycle_by_milestone():
+    ret = mantis_get_test_cycle_by_milestone_tool(request.args)
+    resp = response(200, ret)
     return jsonify(resp)
 
 

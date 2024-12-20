@@ -6,6 +6,7 @@ from sqlalchemy.orm import aliased
 
 from common_tools.tools import create_current_format_time, get_gap_days, update_tool, calculate_time_to_finish, \
     conditional_filter, generate_week, get_first_and_last_day, generate_week_str
+from mantis.controller.mantis_test_cycle_tool import deal_week_time
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
 from mantis.models.mantis_test_milestone_cycle import MantisTestMileStone, MantisTestCycle
@@ -68,14 +69,7 @@ def mantis_get_test_milestone_time_table_tool():
 
 
 def generate_test_milestone_tool(current_time, mtm):
-
-    start_year, due_year = mtm.start_date[:4], mtm.due_date[:4]
-    start_week, due_week = generate_week_str(mtm.start_date), generate_week_str(mtm.due_date)
-    if mtm.start_date[5:7] == '12' and start_week == '01':
-        start_year = str(int(start_year) + 1)
-    if mtm.due_date[5:7] == '12' and due_week == '01':
-        due_year = str(int(due_year) + 1)
-
+    start_year, due_year, start_week, due_week = deal_week_time(mtm)
     mtm = {
         'id': mtm.id,
         'name': mtm.name,

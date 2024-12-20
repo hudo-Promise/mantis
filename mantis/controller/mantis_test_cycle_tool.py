@@ -2,7 +2,9 @@ import time
 
 from sqlalchemy.sql import func
 
-from common_tools.tools import create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish
+from common_tools.tools import (
+    create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, generate_week_str
+)
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
     get_case_current_result, get_test_cycle_for_graph
 from mantis.models import mantis_db
@@ -51,12 +53,45 @@ def mantis_edit_test_cycle_tool(request_params):
 
 def mantis_get_test_cycle_tool(request_params):
     current_time = create_current_format_time()
-    mtc_list = MantisTestCycle.query.filter(MantisTestCycle.cluster == request_params.get('cluster')).all()
-    return list(map(lambda mtc: generate_test_cycle_tool(current_time, mtc), mtc_list))
+    filter_list = [MantisTestCycle.cluster == request_params.get('cluster')]
+    if request_params.get('start_date') and request_params.get('due_date'):
+        filter_list.append(MantisTestCycle.start_date >= request_params.get('start_date'))
+        filter_list.append(MantisTestCycle.due_date <= request_params.get('due_date'))
+    if request_params.get('tester'):
+        filter_list.append(
+            func.JSON_EXTRACT(MantisTestCycle.free_test_item, '$[0].tester') == request_params.get('tester')
+        )
+    if request_params.get('status'):
+        filter_list.append(getattr(MantisTestCycle, request_params.get('status')) == request_params.get('status'))
+    mtc_list = MantisTestCycle.query.filter(*filter_list).all()
+    ret = {}
+    if not request_params.get('group_by'):
+        ret[0] = list(map(lambda _mtc: generate_test_cycle_tool(current_time, _mtc), mtc_list))
+    else:
+        for mtc in mtc_list:
+            cur_mtc = generate_test_cycle_tool(current_time, mtc)
+            if getattr(cur_mtc, request_params.get('key')) not in ret.keys():
+                ret[getattr(cur_mtc, request_params.get('key'))] = []
+            ret[getattr(cur_mtc, request_params.get('key'))].append(cur_mtc)
+    return ret
+
+
+def mantis_get_test_cycle_by_milestone_tool(request_params):
+    current_time = create_current_format_time()
+    filter_list = [MantisTestCycle.linked_milestone == request_params.get('linked_milestone')]
+    mtc_list = MantisTestCycle.query.filter(*filter_list).order_by(MantisTestCycle.test_group).all()
+    cycle_group = {}
+    for mtc in mtc_list:
+        cur_mtc = generate_test_cycle_tool(current_time, mtc)
+        if mtc.test_group not in cycle_group.keys():
+            cycle_group[mtc.test_group] = []
+        cycle_group[mtc.test_group].append(cur_mtc)
+    return cycle_group
 
 
 def generate_test_cycle_tool(current_time, mtc):
-    return {
+    start_year, due_year, start_week, due_week = deal_week_time(mtc)
+    ret = {
         'id': mtc.id,
         'name': mtc.name,
         'test_group': mtc.test_group,
@@ -65,7 +100,9 @@ def generate_test_cycle_tool(current_time, mtc):
         'cluster': mtc.cluster,
         'market': mtc.market,
         'start_date': mtc.start_date,
+        'start_week': f'{start_year}-{generate_week_str(mtc.start_date)}',
         'due_date': mtc.due_date,
+        'due_week': f'{due_year}-{generate_week_str(mtc.due_date)}',
         'actual_finish_date': mtc.actual_finish_date,
         'description': mtc.description,
         'filter_id': mtc.filter_id,
@@ -80,6 +117,18 @@ def generate_test_cycle_tool(current_time, mtc):
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
     }
+
+    return ret
+
+
+def deal_week_time(mtc):
+    start_year, due_year = mtc.start_date[:4], mtc.due_date[:4]
+    start_week, due_week = generate_week_str(mtc.start_date), generate_week_str(mtc.due_date)
+    if mtc.start_date[5:7] == '12' and start_week == '01':
+        start_year = str(int(start_year) + 1)
+    if mtc.due_date[5:7] == '12' and due_week == '01':
+        due_year = str(int(due_year) + 1)
+    return start_year, due_year, start_week, due_week
 
 
 def mantis_delete_test_cycle_tool(request_params):

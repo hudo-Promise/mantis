@@ -2,7 +2,8 @@ import json
 
 from common_tools.tools import create_current_format_time, op11_redis_client
 from mantis.mantis_caches import mantis_update_sw_cache
-from mantis.mantis_status import mantis_project, field_display_order
+from mantis.mantis_status import mantis_project, field_display_order, milestone_status, cycle_status, free_test_status, \
+    label_mapping
 from mantis.models import mantis_db
 from mantis.models.case import SWMap
 
@@ -31,7 +32,11 @@ def get_common_info_tool():
         'mantis_result': generate_field_dict(field_mapping.get('test_result')),
         'mantis_tb_type': generate_field_dict(field_mapping.get('tb_type')),
         'mantis_fuLi': json.loads(op11_redis_client.get('fuLi_group')),
-        'field_display_order': field_display_order
+        'field_display_order': field_display_order,
+        'milestone_status': milestone_status,
+        'cycle_status': cycle_status,
+        'free_test_status': free_test_status,
+        'label_mapping': label_mapping
     }
     del field_mapping['fuLi_value']
     del field_mapping['function']
