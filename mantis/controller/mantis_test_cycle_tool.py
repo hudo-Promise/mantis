@@ -29,6 +29,7 @@ def mantis_create_test_cycle_tool(request_params):
         test_scenario=request_params.get('test_scenario'),
         free_test_item=request_params.get('free_test_item'),
         status=1,
+        line=request_params.get('line'),
         create_time=current_time,
         update_time=current_time,
     )
@@ -41,7 +42,7 @@ def mantis_edit_test_cycle_tool(request_params):
     update_dict = {'update_time': create_current_format_time()}
     update_key = [
         'name', 'test_group', 'linked_milestone', 'market', 'start_date', 'due_date', 'description', 'filter_id',
-        'test_scenario', 'free_test_item', 'status'
+        'test_scenario', 'free_test_item', 'status', 'line'
     ]
     update_tool(update_dict, request_params, update_key, mtc)
     milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
@@ -80,11 +81,18 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
     current_time = create_current_format_time()
     filter_list = [MantisTestCycle.linked_milestone == request_params.get('linked_milestone')]
     mtc_list = MantisTestCycle.query.filter(*filter_list).order_by(MantisTestCycle.test_group).all()
+    group_line = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
     cycle_group = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
     for mtc in mtc_list:
         cur_mtc = generate_test_cycle_tool(current_time, mtc)
         cycle_group[mtc.test_group].append(cur_mtc)
-    return cycle_group
+        if mtc.line > group_line.get(mtc.test_group, 0):
+            group_line[mtc.test_group] = mtc.line
+    ret = {
+        'cycle_group': cycle_group,
+        'group_line': group_line,
+    }
+    return ret
 
 
 def generate_test_cycle_tool(current_time, mtc):
@@ -112,6 +120,7 @@ def generate_test_cycle_tool(current_time, mtc):
             get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
             0.9
         ),  # TODO
+        'line': mtc.line,
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
     }

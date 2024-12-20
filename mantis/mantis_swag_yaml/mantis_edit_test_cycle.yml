@@ -40,6 +40,8 @@ parameters:
           example: [{tester: 1, desc: string, status: integer}]
         status:
           type: integer
+        line:
+          type: integer
 
 responses:
   200:

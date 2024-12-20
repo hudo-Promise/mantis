@@ -35,6 +35,8 @@ parameters:
         free_test_item:
           type: array
           example: [{tester: 1, desc: string, status: integer}]
+        line:
+          type: integer
 
 
 
