@@ -124,7 +124,6 @@ def generate_test_cycle_tool(current_time, mtc):
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
     }
-
     return ret
 
 
@@ -163,8 +162,7 @@ def mantis_get_test_cycle_pie_chart_tool(params_dict):
 
 def mantis_test_cycle_work_report_tool():
     year = time.localtime().tm_year
-    start_time = f'{year}-01-01 00:00:00'
-    end_time = f'{year}-12-31 23:59:59'
+    start_time, end_time = f'{year}-01-01 00:00:00', f'{year}-12-31 23:59:59'
     rows = mantis_db.session.query(
         CaseResult.tester,
         func.date_format(CaseResult.upgrade_time, '%Y-%m').label('upgrade_time'),
