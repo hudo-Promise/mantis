@@ -5,7 +5,7 @@ from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import aliased
 
 from common_tools.tools import create_current_format_time, get_gap_days, update_tool, calculate_time_to_finish, \
-    conditional_filter, generate_week, get_first_and_last_day, generate_week_str
+    conditional_filter, generate_week, get_first_and_last_day, generate_week_str, get_weeks_around_year
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
 from mantis.models.mantis_test_milestone_cycle import MantisTestMileStone, MantisTestCycle
@@ -53,15 +53,8 @@ def mantis_get_test_milestone_time_table_tool():
         'middle_node': f'{year}-{week if len(str(week)) == 2 else "0" + str(week)}',
         'right_node': f'{year if month != 12 else year + 1}-{generate_week_str(right_day)}'
     }
-    week_list = []
-    for i in range(week, 53):
-        week_list.append(f'{year - 1}-{i if len(str(i)) == 2 else "0" + str(i)}')
-    for i in range(1, 53):
-        week_list.append(f'{year}-{i if len(str(i)) == 2 else "0" + str(i)}')
-    for i in range(1, week + 1):
-        week_list.append(f'{year + 1}-{i if len(str(i)) == 2 else "0" + str(i)}')
     ret = {
-        'week': week_list,
+        'week': get_weeks_around_year(),
         'time_node': time_node,
     }
     return ret
