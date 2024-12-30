@@ -3,7 +3,8 @@ import time
 from sqlalchemy.sql import func
 
 from common_tools.tools import (
-    create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, generate_week_str
+    create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, generate_week_str,
+    get_dates_by_week
 )
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
     get_case_current_result, get_test_cycle_for_graph, deal_week_time
@@ -22,8 +23,8 @@ def mantis_create_test_cycle_tool(request_params):
         project=milestone.project,
         cluster=milestone.cluster,
         market=request_params.get('market'),
-        start_date=request_params.get('start_date'),
-        due_date=request_params.get('due_date'),
+        start_date=get_dates_by_week(request_params.get('start_date')),
+        due_date=get_dates_by_week(request_params.get('due_date')),
         description=request_params.get('description'),
         filter_id=request_params.get('filter_id'),
         test_scenario=request_params.get('test_scenario'),
@@ -44,6 +45,8 @@ def mantis_edit_test_cycle_tool(request_params):
         'name', 'test_group', 'linked_milestone', 'market', 'start_date', 'due_date', 'description', 'filter_id',
         'test_scenario', 'free_test_item', 'status', 'line'
     ]
+    for key in ['start_date', 'due_date']:
+        request_params[key] = get_dates_by_week(request_params.get(key))
     update_tool(update_dict, request_params, update_key, mtc)
     milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
     update_dict['cluster'] = milestone.cluster
@@ -56,6 +59,8 @@ def mantis_get_test_cycle_tool(request_params):
     current_time = create_current_format_time()
     filter_list = [MantisTestCycle.cluster == request_params.get('cluster')]
     if request_params.get('start_date') and request_params.get('due_date'):
+        for key in ['start_date', 'due_date']:
+            request_params[key] = get_dates_by_week(request_params.get(key))
         filter_list.append(MantisTestCycle.start_date >= request_params.get('start_date'))
         filter_list.append(MantisTestCycle.due_date <= request_params.get('due_date'))
     if request_params.get('tester'):

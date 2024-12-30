@@ -25,10 +25,10 @@ parameters:
           example: []
         start_date:
           type: string
-          example: xxxx-xx-xx
+          example: xxxx-xx
         due_date:
           type: string
-          example: xxxx-xx-xx
+          example: xxxx-xx
         description:
           type: string
         filter_id:

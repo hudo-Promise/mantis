@@ -27,6 +27,15 @@ def create_offset_format_time(n, target_datetime=None):
     return result
 
 
+def get_dates_by_week(year_week_str):
+    year, week = map(int, year_week_str.split('-'))
+    year_start = datetime.datetime(year, 1, 1)
+    first_week_start = year_start - datetime.timedelta(days=year_start.weekday())
+    target_week_start = first_week_start + datetime.timedelta(weeks=week - 1)
+    # dates_in_week = [target_week_start + datetime.timedelta(days=i) for i in range(7)]
+    return target_week_start.strftime('%Y-%m-%d')
+
+
 def get_weeks_around_year():
     result = []
     now = datetime.datetime.now()

@@ -5,7 +5,8 @@ from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import aliased
 
 from common_tools.tools import create_current_format_time, get_gap_days, update_tool, calculate_time_to_finish, \
-    conditional_filter, generate_week, get_first_and_last_day, generate_week_str, get_weeks_around_year
+    conditional_filter, generate_week, get_first_and_last_day, generate_week_str, get_weeks_around_year, \
+    get_dates_by_week
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
 from mantis.models.mantis_test_milestone_cycle import MantisTestMileStone, MantisTestCycle
@@ -19,8 +20,8 @@ def mantis_create_test_milestone_tool(request_params):
         project=request_params.get('project'),
         cluster=request_params.get('cluster'),
         status=1,
-        start_date=request_params.get('start_date'),
-        due_date=request_params.get('due_date'),
+        start_date=get_dates_by_week(request_params.get('start_date')),
+        due_date=get_dates_by_week(request_params.get('due_date')),
         create_time=current_time,
         update_time=current_time,
     )
@@ -31,7 +32,9 @@ def mantis_create_test_milestone_tool(request_params):
 def mantis_edit_test_milestone_tool(request_params):
     mtm = MantisTestMileStone.query.filter(MantisTestMileStone.id == request_params.get('id')).first()
     update_dict = {'update_time': create_current_format_time()}
-    update_key = ['name', 'description', 'project', 'cluster', 'status', 'due_date']
+    update_key = ['name', 'description', 'project', 'cluster', 'status', 'start_date', 'due_date']
+    for key in ['start_date', 'due_date']:
+        request_params[key] = get_dates_by_week(request_params.get(key))
     update_tool(update_dict, request_params, update_key, mtm)
     MantisTestMileStone.query.filter(MantisTestMileStone.id == request_params.get('id')).update(update_dict)
     mantis_db.session.commit()
