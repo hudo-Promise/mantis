@@ -1,0 +1,29 @@
+tags:
+  - MANTIS Project相关接口
+summary:
+  - 编辑 project
+description:
+    编辑 project
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 编辑 project
+      properties:
+        id:
+          type: integer
+          example: 1
+        project:
+          type: string
+          example: xxx
+
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

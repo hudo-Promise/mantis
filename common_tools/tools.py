@@ -28,16 +28,14 @@ def create_offset_format_time(n, target_datetime=None):
 
 
 def get_weeks_around_year():
-    from datetime import datetime, timedelta
     result = []
-    now = datetime.now()
-    start_date = now - timedelta(days=365)
-    end_date = now + timedelta(days=365)
-    current_date = start_date
-    while current_date <= end_date:
-        year_week = current_date.strftime('%Y-%W')
+    now = datetime.datetime.now()
+    start_date = now - datetime.timedelta(days=365)
+    end_date = now + datetime.timedelta(days=365)
+    while start_date <= end_date:
+        year_week = start_date.strftime('%Y-%W')
         result.append(year_week)
-        current_date += timedelta(days=7)
+        start_date += datetime.timedelta(days=7)
     return result
 
 

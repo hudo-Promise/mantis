@@ -23,6 +23,7 @@ def mantis_delete_project_tool(params_dict):
 
 
 def mantis_get_project_tool(params_dict):
-    MantisProject.query.filter(
+    mps = MantisProject.query.filter(
         MantisProject.project == params_dict.get('id')
     ).all()
+    return [{'id': mp.id, 'project': mp.project} for mp in mps]
