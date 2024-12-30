@@ -33,8 +33,9 @@ def get_weeks_around_year():
     start_date = now - datetime.timedelta(days=365)
     end_date = now + datetime.timedelta(days=365)
     while start_date <= end_date:
-        year_week = start_date.strftime('%Y-%W')
-        result.append(year_week)
+        year_week = start_date.isocalendar()
+        week = year_week.week if len(str(year_week.week)) == 2 else f'0{year_week.week}'
+        result.append(f'{year_week.year}-{week}')
         start_date += datetime.timedelta(days=7)
     return result
 
