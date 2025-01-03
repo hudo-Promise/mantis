@@ -16,6 +16,11 @@ from mantis.models.mantis_test_milestone_cycle import MantisTestCycle
 def mantis_create_test_cycle_tool(request_params):
     current_time = create_current_format_time()
     milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
+    free_test_item = generate_free_test_item(
+        request_params.get('test_scenario'),
+        request_params.get('tester'),
+        request_params.get('free_test_item')
+    )
     mtc = MantisTestCycle(
         name=request_params.get('name'),
         test_group=request_params.get('test_group'),
@@ -28,7 +33,7 @@ def mantis_create_test_cycle_tool(request_params):
         description=request_params.get('description'),
         filter_id=request_params.get('filter_id'),
         test_scenario=request_params.get('test_scenario'),
-        free_test_item=request_params.get('free_test_item'),
+        free_test_item=free_test_item,
         status=1,
         line=request_params.get('line'),
         create_time=current_time,
@@ -45,6 +50,12 @@ def mantis_edit_test_cycle_tool(request_params):
         'name', 'test_group', 'linked_milestone', 'market', 'start_date', 'due_date', 'description', 'filter_id',
         'test_scenario', 'free_test_item', 'status', 'line'
     ]
+    free_test_item = generate_free_test_item(
+        request_params.get('test_scenario'),
+        request_params.get('tester'),
+        request_params.get('free_test_item')
+    )
+    request_params['free_test_item'] = free_test_item
     for key in ['start_date', 'due_date']:
         request_params[key] = get_dates_by_week(request_params.get(key))
     update_tool(update_dict, request_params, update_key, mtc)
@@ -53,6 +64,18 @@ def mantis_edit_test_cycle_tool(request_params):
     update_dict['project'] = milestone.project
     MantisTestCycle.query.filter(MantisTestCycle.id == request_params.get('id')).update(update_dict)
     mantis_db.session.commit()
+
+
+def generate_free_test_item(test_scenario, testers, free_test_item):
+    if test_scenario == 1:
+        current_item = []
+        for tester in testers:
+            current_item.append({'desc': None, 'tester': tester, 'status': 0})
+        return current_item
+    elif test_scenario == 2:
+        return free_test_item
+    else:
+        return free_test_item
 
 
 def mantis_get_test_cycle_tool(request_params):

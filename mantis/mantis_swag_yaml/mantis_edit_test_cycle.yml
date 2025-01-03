@@ -35,6 +35,9 @@ parameters:
           type: integer
         test_scenario:
           type: integer
+        tester:
+          type: array
+          example: []
         free_test_item:
           type: array
           example: [{tester: 1, desc: string, status: integer}]
