@@ -238,6 +238,6 @@ def mantis_check_group_value(field, field_value):
     return True
 
 
-def mantis_check_fuli_used(param_dict):
+def mantis_check_fuli_used_tool(param_dict):
     used_count = TestCase.query.filter(TestCase.fuLi_id == param_dict.get('fuLi_value')).count()
     return True if used_count > 0 else False
