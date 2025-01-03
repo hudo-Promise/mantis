@@ -4,6 +4,7 @@ import json
 from common_tools.tools import op11_redis_client
 from mantis.mantis_caches import mantis_update_field_mapping_rule
 from mantis.models import mantis_db
+from mantis.models.case import TestCase
 from mantis.models.functions import SubFunction, Group, Functions, MantisCaseField, MantisFuLiGroup, MantisFuLi
 from mantis.models.mantis_config import MantisMappingRule
 
@@ -235,3 +236,8 @@ def mantis_check_group_value(field, field_value):
         if _get_group_name(group) == field_value:
             return False
     return True
+
+
+def mantis_check_fuli_used(param_dict):
+    used_count = TestCase.query.filter(TestCase.fuLi_id == param_dict.get('fuLi_value')).count()
+    return True if used_count > 0 else False

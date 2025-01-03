@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request
 from mantis.mantis_status.status_code import response
 from mantis.controller.mantis_function_tool import query_functions, mantis_create_functions_tool, \
     mantis_edit_functions_tool, mantis_delete_functions_tool, mantis_create_field_value_tool, \
-    mantis_edit_field_value_tool, mantis_delete_field_value_tool, mantis_check_field_value_tool
+    mantis_edit_field_value_tool, mantis_delete_field_value_tool, mantis_check_field_value_tool, mantis_check_fuli_used
 
 function_blueprint = Blueprint('function', __name__)
 
@@ -72,4 +72,12 @@ def mantis_delete_field_value():
 def mantis_check_field_value():
     result = mantis_check_field_value_tool(request.json)
     resp = response(200, result)
+    return jsonify(resp)
+
+
+@swag_from('../mantis_swag_yaml/mantis_check_fuli_used.yml')
+@function_blueprint.route('/mantis/check/fuli/used', methods=['GET'])
+def mantis_check_field_value():
+    ret = mantis_check_fuli_used(request.args)
+    resp = response(200, ret)
     return jsonify(resp)
