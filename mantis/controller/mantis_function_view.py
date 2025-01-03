@@ -77,7 +77,7 @@ def mantis_check_field_value():
 
 @swag_from('../mantis_swag_yaml/mantis_check_fuli_used.yml')
 @function_blueprint.route('/mantis/check/fuli/used', methods=['GET'])
-def mantis_check_field_value():
+def mantis_check_fuli_used():
     ret = mantis_check_fuli_used(request.args)
     resp = response(200, ret)
     return jsonify(resp)
