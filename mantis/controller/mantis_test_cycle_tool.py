@@ -125,6 +125,7 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
 
 def generate_test_cycle_tool(current_time, mtc):
     start_year, due_year, start_week, due_week = deal_week_time(mtc)
+    tester = [free_item.get('tester') for free_item in mtc.free_test_item]
     ret = {
         'id': mtc.id,
         'name': mtc.name,
@@ -141,6 +142,7 @@ def generate_test_cycle_tool(current_time, mtc):
         'description': mtc.description,
         'filter_id': mtc.filter_id,
         'test_scenario': mtc.test_scenario,
+        'tester': tester,
         'free_test_item': mtc.free_test_item,
         'status': mtc.status,
         'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
