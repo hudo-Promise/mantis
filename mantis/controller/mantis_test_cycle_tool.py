@@ -164,7 +164,9 @@ def mantis_delete_test_cycle_tool(request_params):
 
 
 def mantis_get_test_cycle_insight_graph_tool(params_dict):
-    mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
+    mtc = get_test_cycle_for_graph(
+        {'id': params_dict.get('id')}
+    )
     ret = get_case_current_result(mtc.filter_config, mtc.id, query_type=params_dict.get('query_type'))
     return ret
 

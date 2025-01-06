@@ -121,11 +121,18 @@ def get_test_milestone_insight_graph_tool(params_dict):
         }
     )
     insight = {}
-    for cycle in cycles:
-        if cycle.test_group not in insight.keys():
-            insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-        for result_id, result_count in get_case_current_result(cycle.filter_config, cycle.id).items():
-            insight[cycle.test_group] = dict(Counter(insight.get(cycle.test_group)) + Counter(result_count))
+    if params_dict.get('test_scenario') == 1:
+        for cycle in cycles:
+            if cycle.test_group not in insight.keys():
+                insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+            for result_id, result_count in get_case_current_result(cycle.filter_config, cycle.id).items():
+                insight[cycle.test_group] = dict(Counter(insight.get(cycle.test_group)) + Counter(result_count))
+    elif params_dict.get('test_scenario') == 2:
+        for cycle in cycles:
+            if cycle.test_group not in insight.keys():
+                insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+            for item in cycle.free_test_item:
+                insight[cycle.test_group][item.get('status')] += 1
     return insight
 
 
@@ -146,12 +153,10 @@ def get_test_milestone_group_graph_tool(params_dict):
                     insight[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
                 insight[func_id] = dict(Counter(insight.get(func_id)) + Counter(result_count))
         elif params_dict.get('test_scenario') == 2:
-            for tester in cycle.free_test_item.keys():
-                if cycle.free_test_item not in insight.keys():
-                    insight[tester] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-                for result_id, result_count in get_case_current_result(
-                        cycle.filter_config, cycle.id, 'tester').items():
-                    insight[tester] = dict(insight[tester] + Counter(result_count))
+            for item in cycle.free_test_item:
+                if item.get('tester') not in insight.keys():
+                    insight[item.get('tester')] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+                insight[item.get('tester')][item.get('status')] += 1
     return insight
 
 
@@ -163,19 +168,15 @@ def get_test_cycle_for_graph(params_dict):
         MantisTestCycle.free_test_item,
         MantisFilterRecord.filter_config
     ]
+    cycles = mantis_db.session.query(*query_list).join(
+        MantisFilterRecord,
+        MantisTestCycle.filter_id == MantisFilterRecord.id,
+        isouter=True
+    ).filter(*filter_list)
     if 'id' in params_dict.keys():
-        cycles = mantis_db.session.query(*query_list).json(
-            MantisFilterRecord,
-            MantisTestCycle.filter_id == MantisFilterRecord.id,
-            isouter=True
-        ).filter(*filter_list).first()
+        return cycles.first()
     else:
-        cycles = mantis_db.session.query(*query_list).json(
-            MantisFilterRecord,
-            MantisTestCycle.filter_id == MantisFilterRecord.id,
-            isouter=True
-        ).filter(*filter_list).all()
-    return cycles
+        return cycles.all()
 
 
 def get_case_current_result(filter_config, cycle_id, query_type=None):
