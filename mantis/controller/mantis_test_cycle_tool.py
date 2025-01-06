@@ -185,7 +185,7 @@ def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
     ).filter(CaseResult.cycle_id == mtc.id).group_by(func.date(CaseResult.upgrade_time)).all()
     burnout_dict = {}
     for burnout in burnout_data:
-        burnout_dict[burnout.upgrade_date] = case_count - burnout.count
+        burnout_dict[str(burnout.upgrade_date)] = case_count - burnout.count
         case_count -= burnout.count
     ret = {'case_count': case_count, 'burnout_data': burnout_dict}
     return ret
