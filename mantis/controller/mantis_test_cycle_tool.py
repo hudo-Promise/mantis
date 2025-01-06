@@ -147,7 +147,7 @@ def generate_test_cycle_tool(current_time, mtc):
         'status': mtc.status,
         'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
         'time_to_finish': calculate_time_to_finish(
-            get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
+            get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
             0.9
         ),  # TODO
         'line': mtc.line,

@@ -78,7 +78,7 @@ def generate_test_milestone_tool(current_time, mtm):
         'due_week': f'{due_year}-{generate_week_str(mtm.due_date)}',
         'time_left': get_gap_days(current_time, f'{mtm.due_date} 00:00:00') + 1,
         'time_to_finish': calculate_time_to_finish(
-            get_gap_days(current_time, f'{mtm.due_date} 00:00:00') + 1,
+            get_gap_days(f'{mtm.start_date} 00:00:00', current_time) + 1,
             0.9
         ),  # TODO
         'create_time': str(mtm.create_time),
