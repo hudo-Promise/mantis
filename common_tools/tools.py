@@ -189,7 +189,7 @@ def update_tool(update_dict, params, update_key, mtc):
 
 
 def calculate_time_to_finish(user_time, percent):
-    return round((user_time / percent) * (1 - percent))
+    return round(1 - percent / (percent / user_time))
 
 
 def get_first_and_last_day(year, month):

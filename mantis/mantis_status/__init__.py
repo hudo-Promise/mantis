@@ -301,7 +301,7 @@ free_test_status = {
 }
 
 label_mapping = {
-    1: 'Risk',
-    2: 'Delay',
-    3: 'Normal'
+    1: 'Normal',
+    2: 'Risk',
+    3: 'Delay',
 }

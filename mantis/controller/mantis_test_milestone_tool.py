@@ -78,12 +78,13 @@ def generate_test_milestone_tool(current_time, mtm):
         'due_week': f'{due_year}-{generate_week_str(mtm.due_date)}',
         'time_left': get_gap_days(current_time, f'{mtm.due_date} 00:00:00') + 1,
         'time_to_finish': calculate_time_to_finish(
-            get_gap_days(f'{mtm.start_date} 00:00:00', current_time) + 1,
+            get_gap_days(current_time, f'{mtm.due_date} 00:00:00') + 1,
             0.9
         ),  # TODO
         'create_time': str(mtm.create_time),
         'update_time': str(mtm.update_time),
     }
+    mtm['label'] = calculate_label(mtm.get('time_left'), mtm.get('time_to_finish'))
     return mtm
 
 
@@ -236,3 +237,12 @@ def mantis_test_milestone_group_order_tool(params_dict):
     ).group_by(MantisTestCycle.linked_milestone).order_by(MantisTestCycle.linked_milestone).all()
     ret = [cycle.test_group for cycle in cycles]
     return ret
+
+
+def calculate_label(time_left, time_to_finish):
+    if time_left > time_to_finish:
+        return 1
+    elif time_left < time_to_finish:
+        return 3
+    else:
+        return 2

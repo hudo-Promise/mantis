@@ -7,7 +7,7 @@ from common_tools.tools import (
     get_dates_by_week
 )
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
-    get_case_current_result, get_test_cycle_for_graph, deal_week_time
+    get_case_current_result, get_test_cycle_for_graph, deal_week_time, calculate_label
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult
 from mantis.models.mantis_test_milestone_cycle import MantisTestCycle
@@ -147,13 +147,14 @@ def generate_test_cycle_tool(current_time, mtc):
         'status': mtc.status,
         'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
         'time_to_finish': calculate_time_to_finish(
-            get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
+            get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
             0.9
         ),  # TODO
         'line': mtc.line,
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
     }
+    ret['label'] = calculate_label(ret.get('time_left'), ret.get('time_to_finish'))
     return ret
 
 
