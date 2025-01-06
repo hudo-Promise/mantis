@@ -213,6 +213,8 @@ def parse_case_filter_config(filter_config):
     filter_list = []
     case_column_dict = TestCase.get_field_dict()
     for key, values in filter_config.items():
+        if not values:
+            continue
         if key == 'fuLi_value':
             key = 'fuLi_id'
         if key not in case_column_dict.keys():
