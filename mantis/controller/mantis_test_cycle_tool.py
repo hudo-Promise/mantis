@@ -173,6 +173,8 @@ def mantis_get_test_cycle_insight_graph_tool(params_dict):
 
 def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
     mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
+    if not mtc:
+        return
     filter_list = parse_case_filter_config(mtc.filter_config)
     case_count = TestCase.query.filter(*filter_list).count()
     burnout_data = mantis_db.session.query(
