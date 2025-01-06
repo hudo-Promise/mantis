@@ -179,15 +179,20 @@ def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
         return
     filter_list = parse_case_filter_config(mtc.filter_config)
     case_count = TestCase.query.filter(*filter_list).count()
+    expect_data = {mtc.start_date: case_count, mtc.due_date: 0}
     burnout_data = mantis_db.session.query(
         func.date(CaseResult.upgrade_time).label('upgrade_date'),
         func.count(1).label('count')
-    ).filter(CaseResult.cycle_id == mtc.id).group_by(func.date(CaseResult.upgrade_time)).all()
+    ).filter(
+        CaseResult.cycle_id == mtc.id
+    ).group_by(
+        func.date(CaseResult.upgrade_time)
+    ).order_by(func.date(CaseResult.upgrade_time)).all()
     burnout_dict = {}
     for burnout in burnout_data:
         burnout_dict[str(burnout.upgrade_date)] = case_count - burnout.count
         case_count -= burnout.count
-    ret = {'case_count': case_count, 'burnout_data': burnout_dict}
+    ret = {'expect_data': expect_data, 'burnout_data': burnout_dict}
     return ret
 
 

@@ -162,6 +162,8 @@ def get_test_cycle_for_graph(params_dict):
     filter_list = [getattr(MantisTestCycle, key) == value for key, value in params_dict.items()]
     query_list = [
         MantisTestCycle.id,
+        MantisTestCycle.start_date,
+        MantisTestCycle.due_date,
         MantisTestCycle.test_group,
         MantisTestCycle.free_test_item,
         MantisFilterRecord.filter_config
