@@ -29,10 +29,10 @@ parameters:
           example: 1
         start_date:
           type: string
-          example: xxxx-xx
+          example: xxxx-xx-xx
         due_date:
           type: string
-          example: xxxx-xx
+          example: xxxx-xx-xx
 
 
 responses:
