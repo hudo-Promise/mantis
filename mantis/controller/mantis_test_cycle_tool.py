@@ -166,7 +166,20 @@ def mantis_get_test_cycle_insight_graph_tool(params_dict):
     mtc = get_test_cycle_for_graph(
         {'id': params_dict.get('id')}
     )
-    ret = get_case_current_result(mtc.filter_config, mtc.id, query_type=params_dict.get('query_type'))
+    result = get_case_current_result(mtc.filter_config, mtc.id, query_type=params_dict.get('query_type'))
+    axis = sorted([key for key in result.keys()])
+    ret = {
+        'axis': axis,
+        '1': [],
+        '2': [],
+        '3': [],
+        '4': [],
+        '5': [],
+
+    }
+    for axis_key in axis:
+        for key, value in result.get(axis_key).items():
+            ret[str(key)].append(value)
     return ret
 
 

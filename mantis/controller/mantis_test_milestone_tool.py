@@ -195,9 +195,9 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
         common_query_list = [func.max(getattr(TestCase, query_type)).label(query_type)] + common_query_list
         group_list = [getattr(TestCase, query_type)] + group_list
     elif query_type == 'tester':
-        common_query_list = [func.max(getattr(cr_alias.c, query_type)).label(query_type)] + common_query_list
-        group_list = [func.max(getattr(cr_alias.c, query_type)).label(query_type)] + group_list
-    result_number = mantis_db.session.query(*common_query_list).join(
+        common_query_list = [cr_alias.c.tester] + common_query_list
+        group_list = [cr_alias.c.tester] + group_list
+    result_number = mantis_db.session.query(*common_query_list).select_from(TestCase).join(
         cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
     ).filter(*filter_list).group_by(*group_list).all()
     ret = {}
@@ -205,6 +205,8 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
         result, count = row.test_result if row.test_result is not None else 4, row.count
         if query_type:
             key = getattr(row, query_type)
+            if not key:
+                continue
             if key not in ret.keys():
                 ret[key] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
             ret[key][result] = count if result not in ret[key].keys() else ret[key][result] + count
