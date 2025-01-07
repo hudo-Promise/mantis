@@ -57,8 +57,6 @@ def mantis_edit_test_cycle_tool(request_params):
         request_params.get('free_test_item')
     )
     request_params['free_test_item'] = free_test_item
-    for key in ['start_date', 'due_date']:
-        request_params[key] = get_dates_by_week(request_params.get(key))
     update_tool(update_dict, request_params, update_key, mtc)
     milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
     update_dict['cluster'] = milestone.cluster

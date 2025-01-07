@@ -181,25 +181,28 @@ def get_test_cycle_for_graph(params_dict):
 
 def get_case_current_result(filter_config, cycle_id, query_type=None):
     filter_list = parse_case_filter_config(filter_config)
-    subquery = mantis_db.session.query(CaseResult.m_id, CaseResult.test_result).filter(
+    subquery = mantis_db.session.query(CaseResult.m_id, CaseResult.test_result, CaseResult.tester).filter(
         CaseResult.cycle_id == cycle_id
     ).subquery()
     cr_alias = aliased(subquery, name='cr')
-    common_query_list = [func.max(cr_alias.c.test_result).label('test_result'), func.count(1).label('count')]
+    common_query_list = [
+        # func.max(TestCase.id).label('id'),
+        func.max(cr_alias.c.test_result).label('test_result'),
+        func.count(1).label('count')
+    ]
     group_list = [cr_alias.c.test_result]
     if query_type == 'function':
         common_query_list = [func.max(getattr(TestCase, query_type)).label(query_type)] + common_query_list
         group_list = [getattr(TestCase, query_type)] + group_list
     elif query_type == 'tester':
-        common_query_list = [getattr(CaseResult, query_type)] + common_query_list
-        group_list = [getattr(CaseResult, query_type)] + group_list
+        common_query_list = [func.max(getattr(cr_alias.c, query_type)).label(query_type)] + common_query_list
+        group_list = [func.max(getattr(cr_alias.c, query_type)).label(query_type)] + group_list
     result_number = mantis_db.session.query(*common_query_list).join(
         cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
     ).filter(*filter_list).group_by(*group_list).all()
     ret = {}
     for row in result_number:
         result, count = row.test_result if row.test_result is not None else 4, row.count
-
         if query_type:
             key = getattr(row, query_type)
             if key not in ret.keys():
@@ -207,13 +210,6 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
             ret[key][result] = count if result not in ret[key].keys() else ret[key][result] + count
         else:
             ret[result] = count if result not in ret.keys() else ret[result] + count
-        # if query_type:
-        #     key = getattr(row, query_type)
-        #     if key not in ret.keys():
-        #         ret[key] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-        #     ret[key][result] = count if result not in ret[key].keys() else ret[key][result] + count
-        # else:
-        #     ret[result] = count if result not in ret.keys() else ret[result] + count
     return ret
 
 
