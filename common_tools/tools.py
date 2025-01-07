@@ -197,3 +197,11 @@ def get_first_and_last_day(year, month):
     first_day = datetime.date(year, month, day=1)
     last_day = datetime.date(year, month, day=month_count_day)
     return first_day.strftime(f"{FORMAT_DATE}"), last_day.strftime(f"{FORMAT_DATE}")
+
+
+def generate_dates(start_date, end_date):
+    start = datetime.datetime.strptime(start_date, FORMAT_DATE)
+    end = datetime.datetime.strptime(end_date, FORMAT_DATE)
+    day = datetime.timedelta(days=1)
+    for i in range((end - start).days + 1):
+        yield start + day * i

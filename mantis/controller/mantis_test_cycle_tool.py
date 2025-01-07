@@ -4,8 +4,9 @@ from sqlalchemy.sql import func
 
 from common_tools.tools import (
     create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, generate_week_str,
-    get_dates_by_week
+    get_dates_by_week, generate_dates
 )
+from config.basic_setting import FORMAT_DATE
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
     get_case_current_result, get_test_cycle_for_graph, deal_week_time, calculate_label
 from mantis.models import mantis_db
@@ -179,7 +180,7 @@ def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
         return
     filter_list = parse_case_filter_config(mtc.filter_config)
     case_count = TestCase.query.filter(*filter_list).count()
-    expect_data = {mtc.start_date: case_count, mtc.due_date: 0}
+    expect_date = [i.strftime(FORMAT_DATE) for i in generate_dates(str(mtc.start_date), str(mtc.due_date))]
     burnout_data = mantis_db.session.query(
         func.date(CaseResult.upgrade_time).label('upgrade_date'),
         func.count(1).label('count')
@@ -188,11 +189,20 @@ def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
     ).group_by(
         func.date(CaseResult.upgrade_time)
     ).order_by(func.date(CaseResult.upgrade_time)).all()
-    burnout_dict = {}
+    daily_finish_num = {}
     for burnout in burnout_data:
-        burnout_dict[str(burnout.upgrade_date)] = case_count - burnout.count
-        case_count -= burnout.count
-    ret = {'expect_data': expect_data, 'burnout_data': burnout_dict}
+        daily_finish_num[str(burnout.upgrade_date)] = burnout.count
+    burnout = []
+    for i in range(0, len(expect_date)):
+        if i == 0:
+            current_count = case_count
+        else:
+            if daily_finish_num.get(expect_date[i]):
+                current_count = burnout[i-1] - daily_finish_num.get(expect_date[i])
+            else:
+                current_count = burnout[i-1]
+        burnout.append(current_count)
+    ret = {'expect_data': expect_date, 'start_num': case_count, 'burnout_data': burnout}
     return ret
 
 
