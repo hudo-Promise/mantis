@@ -185,10 +185,10 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
         CaseResult.cycle_id == cycle_id
     ).subquery()
     cr_alias = aliased(subquery, name='cr')
-    common_query_list = [func.max(cr_alias.c.test_result), func.count(1).label('count')]
+    common_query_list = [func.max(cr_alias.c.test_result).label('test_result'), func.count(1).label('count')]
     group_list = [cr_alias.c.test_result]
     if query_type == 'function':
-        common_query_list = [func.max(getattr(TestCase, query_type))] + common_query_list
+        common_query_list = [func.max(getattr(TestCase, query_type)).label(query_type)] + common_query_list
         group_list = [getattr(TestCase, query_type)] + group_list
     elif query_type == 'tester':
         common_query_list = [getattr(CaseResult, query_type)] + common_query_list
