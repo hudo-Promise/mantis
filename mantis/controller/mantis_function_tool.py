@@ -199,12 +199,15 @@ def mantis_clear_mapping_rule(field, field_id):
     update_list = []
     for mr in mrs:
         mapping_rule = mr.mapping_rule
+        if int(field_id) not in mapping_rule.get(field, []):
+            continue
         mapping_rule[field].remove(int(field_id))
         update_list.append({
             'id': mr.id,
             'mapping_rule': mapping_rule
         })
-    mantis_db.session.bulk_update_mappings(MantisMappingRule, update_list)
+    if update_list:
+        mantis_db.session.bulk_update_mappings(MantisMappingRule, update_list)
 
 
 def mantis_check_field_value_tool(request_params):
