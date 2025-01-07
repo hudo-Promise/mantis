@@ -195,7 +195,10 @@ def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
     burnout = []
     for i in range(0, len(expect_date)):
         if i == 0:
-            current_count = case_count
+            if daily_finish_num.get(expect_date[i]):
+                current_count = case_count - daily_finish_num.get(expect_date[i])
+            else:
+                current_count = case_count
         else:
             if daily_finish_num.get(expect_date[i]):
                 current_count = burnout[i-1] - daily_finish_num.get(expect_date[i])
