@@ -149,7 +149,7 @@ def mantis_delete_functions_tool(request_params):
         _cascade_clear_fuli()
     elif field == 'fuLi':
         MantisFuLi.query.filter(MantisFuLi.id == request_params.get('id')).update({'delete_flag': 2})
-        mantis_clear_mapping_rule(field, request_params.get('id'))
+        mantis_clear_mapping_rule(f'{field}_value', request_params.get('id'))
     mantis_db.session.commit()
     mantis_update_field_mapping_rule()
 

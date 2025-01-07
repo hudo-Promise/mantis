@@ -199,6 +199,7 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
     ret = {}
     for row in result_number:
         result, count = row.test_result if row.test_result is not None else 4, row.count
+
         if query_type:
             key = getattr(row, query_type)
             if key not in ret.keys():
@@ -206,6 +207,13 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
             ret[key][result] = count if result not in ret[key].keys() else ret[key][result] + count
         else:
             ret[result] = count if result not in ret.keys() else ret[result] + count
+        # if query_type:
+        #     key = getattr(row, query_type)
+        #     if key not in ret.keys():
+        #         ret[key] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        #     ret[key][result] = count if result not in ret[key].keys() else ret[key][result] + count
+        # else:
+        #     ret[result] = count if result not in ret.keys() else ret[result] + count
     return ret
 
 
