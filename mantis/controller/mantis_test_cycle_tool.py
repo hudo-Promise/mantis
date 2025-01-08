@@ -168,16 +168,40 @@ def mantis_delete_test_cycle_tool(request_params):
 
 
 def mantis_get_test_cycle_insight_graph_tool(params_dict):
-    query_type = params_dict.get('query_type')
     mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
-    result = get_case_current_result(mtc.filter_config, mtc.id, query_type=query_type)
-    if query_type == 'function':
+    if mtc.test_scenario == 1:
+        ret = mantis_get_test_cycle_insight_graph_test_case_tool(mtc, params_dict)
+    elif mtc.test_scenario == 2:
+        ret = mantis_get_test_cycle_insight_graph_free_test_tool(params_dict)
+    else:
+        ret = {}
+    return ret
+
+
+def mantis_get_test_cycle_insight_graph_test_case_tool(mtc, params_dict):
+    result = get_case_current_result(
+        mtc.filter_config,
+        mtc.id,
+        query_type=params_dict.get('query_type')
+    )
+    if params_dict.get('query_type') == 'function':
         ret = generate_axis_data(result, 1)
-    elif query_type == 'tester':
+    elif params_dict.get('query_type') == 'tester':
         ret = generate_axis_data(result, 2)
     else:
         ret = {}
     return ret
+
+
+def mantis_get_test_cycle_insight_graph_free_test_tool(params_dict):
+    mtc = MantisTestCycle.query.filter(MantisTestCycle.id == params_dict.get('id')).first()
+    ret = {}
+    for free_test_item in mtc.free_test_item:
+        if free_test_item.get('tester') not in ret.keys():
+            ret[free_test_item.get('tester')] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        ret[free_test_item.get('tester')][free_test_item.get('status')] += 1
+    generate_axis_data(ret, 1)
+    return generate_axis_data(ret, 1)
 
 
 def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
@@ -218,9 +242,11 @@ def mantis_get_test_cycle_burnout_diagram_tool(params_dict):
 
 
 def mantis_get_test_cycle_pie_chart_tool(params_dict):
-    mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
-    ret = get_case_current_result(mtc.filter_config, mtc.id)
-    return ret
+    mtc = MantisTestCycle.query.filter(MantisTestCycle.id == params_dict.get('id')).first()
+    ret = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for free_test_item in mtc.free_test_item:
+        ret[free_test_item.get('status')] += 1
+    return {{'value': value, 'free_item_status': key} for key, value in ret.items()}
 
 
 def mantis_test_cycle_work_report_tool():

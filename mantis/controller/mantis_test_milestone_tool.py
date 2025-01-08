@@ -1,13 +1,11 @@
 import time
-from collections import Counter, defaultdict
+from collections import defaultdict
 
 from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import aliased
 
 from common_tools.tools import create_current_format_time, get_gap_days, update_tool, calculate_time_to_finish, \
-    conditional_filter, generate_week, get_first_and_last_day, generate_week_str, get_weeks_around_year, \
-    get_dates_by_week
-# from mantis.mantis_status import {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    conditional_filter, generate_week, get_first_and_last_day, generate_week_str, get_weeks_around_year
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
 from mantis.models.mantis_test_milestone_cycle import MantisTestMileStone, MantisTestCycle
@@ -243,6 +241,7 @@ def get_test_cycle_for_graph(params_dict):
         MantisTestCycle.due_date,
         MantisTestCycle.test_group,
         MantisTestCycle.free_test_item,
+        MantisTestCycle.test_scenario,
         MantisFilterRecord.filter_config
     ]
     cycles = mantis_db.session.query(*query_list).join(
