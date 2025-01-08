@@ -1,5 +1,5 @@
 import time
-from collections import Counter
+from collections import Counter, defaultdict
 
 from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import aliased
@@ -7,6 +7,7 @@ from sqlalchemy.orm import aliased
 from common_tools.tools import create_current_format_time, get_gap_days, update_tool, calculate_time_to_finish, \
     conditional_filter, generate_week, get_first_and_last_day, generate_week_str, get_weeks_around_year, \
     get_dates_by_week
+# from mantis.mantis_status import {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult, MantisFilterRecord
 from mantis.models.mantis_test_milestone_cycle import MantisTestMileStone, MantisTestCycle
@@ -112,9 +113,9 @@ def get_test_milestone_by_id(test_milestone_id):
 
 
 def get_test_milestone_insight_graph_tool(params_dict):
-    if params_dict.get('test_scenario') == 1:
+    if int(params_dict.get('test_scenario')) == 1:
         ret = get_test_milestone_insight_graph_test_case_tool(params_dict)
-    elif params_dict.get('test_scenario') == 2:
+    elif int(params_dict.get('test_scenario')) == 2:
         ret = get_test_milestone_insight_graph_free_test_tool(params_dict)
     else:
         ret = {}
@@ -132,8 +133,8 @@ def get_test_milestone_insight_graph_test_case_tool(params_dict):
     for cycle in cycles:
         if cycle.test_group not in insight.keys():
             insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-        merge_dict = {**insight.get(cycle.test_group), **get_case_current_result(cycle.filter_config, cycle.id)}
-        insight[cycle.test_group] = dict(Counter(merge_dict))
+        for key, value in get_case_current_result(cycle.filter_config, cycle.id).items():
+            insight[cycle.test_group][key] += value
     ret = generate_axis_data(insight, 1)
     return ret
 
@@ -145,12 +146,27 @@ def get_test_milestone_insight_graph_free_test_tool(params_dict):
             'test_scenario': params_dict.get('test_scenario'),
         }
     )
+    insight = {}
     for cycle in cycles:
-        get_free_test_status(cycle, query_type='tester')
-    return
+        if cycle.test_group not in insight.keys():
+            insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        for key, value in get_free_test_status(cycle).items():
+            insight[cycle.test_group][key] += value
+    ret = generate_axis_data(insight, 1)
+    return ret
 
 
 def get_test_milestone_group_graph_tool(params_dict):
+    if int(params_dict.get('test_scenario')) == 1:
+        ret = get_test_milestone_group_graph_test_case_tool(params_dict)
+    elif int(params_dict.get('test_scenario')) == 2:
+        ret = get_test_milestone_group_graph_free_test_tool(params_dict)
+    else:
+        ret = {}
+    return ret
+
+
+def get_test_milestone_group_graph_test_case_tool(params_dict):
     cycles = get_test_cycle_for_graph(
         {
             'linked_milestone': params_dict.get('linked_milestone'),
@@ -160,14 +176,35 @@ def get_test_milestone_group_graph_tool(params_dict):
     )
     insight = {}
     for cycle in cycles:
-        for func_id, result_count in get_case_current_result(
-                cycle.filter_config, cycle.id, 'function').items():
-            if func_id not in insight.keys():
-                insight[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-            merge_dict = {**insight.get(func_id), **result_count}
-            insight[func_id] = dict(Counter(merge_dict))
+        dictionary_accumulator(
+            insight,
+            get_case_current_result(cycle.filter_config, cycle.id, 'function')
+        )
     ret = generate_axis_data(insight, 1)
     return ret
+
+
+def get_test_milestone_group_graph_free_test_tool(params_dict):
+    cycles = get_test_cycle_for_graph(
+        {
+            'linked_milestone': params_dict.get('linked_milestone'),
+            'test_scenario': params_dict.get('test_scenario'),
+            'test_group': params_dict.get('test_group'),
+        }
+    )
+    insight = {}
+    for cycle in cycles:
+        dictionary_accumulator(insight, get_free_test_status(cycle, 'tester'))
+    ret = generate_axis_data(insight, 1)
+    return ret
+
+
+def dictionary_accumulator(insight, current_dict):
+    for target_id, current_ret in current_dict.items():
+        if target_id not in insight:
+            insight[target_id] = defaultdict(int)
+        for key, value in current_ret.items():
+            insight[target_id][key] += value
 
 
 def generate_axis_data(insight, ret_type):
@@ -255,12 +292,18 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
 
 
 def get_free_test_status(cycle, query_type=None):
-    for free_test_item in cycle.free_test_items:
-        status = free_test_item.get('status')
-        if query_type == 'group':
-            key = cycle.test_group
-        elif query_type == 'tester':
+    ret = {}
+    for free_test_item in cycle.free_test_item:
+        if query_type:
             key = free_test_item.get('tester')
+            if key not in ret.keys():
+                ret[key] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+            ret[key][free_test_item.get('status')] += 1
+        else:
+            if free_test_item.get('status') not in ret.keys():
+                ret[free_test_item.get('status')] = 1
+            ret[free_test_item.get('status')] += 1
+    return ret
 
 
 def parse_case_filter_config(filter_config):

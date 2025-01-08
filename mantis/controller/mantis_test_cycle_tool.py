@@ -74,7 +74,7 @@ def generate_free_test_item(test_scenario, testers, free_test_item):
     if test_scenario == 1:
         current_item = []
         for tester in testers:
-            current_item.append({'desc': None, 'tester': tester, 'status': 0})
+            current_item.append({'desc': None, 'tester': tester, 'status': 1})
         return current_item
     elif test_scenario == 2:
         return free_test_item
