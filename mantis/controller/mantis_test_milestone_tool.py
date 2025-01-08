@@ -112,6 +112,16 @@ def get_test_milestone_by_id(test_milestone_id):
 
 
 def get_test_milestone_insight_graph_tool(params_dict):
+    if params_dict.get('test_scenario') == 1:
+        ret = get_test_milestone_insight_graph_test_case_tool(params_dict)
+    elif params_dict.get('test_scenario') == 2:
+        ret = get_test_milestone_insight_graph_free_test_tool(params_dict)
+    else:
+        ret = {}
+    return ret
+
+
+def get_test_milestone_insight_graph_test_case_tool(params_dict):
     cycles = get_test_cycle_for_graph(
         {
             'linked_milestone': params_dict.get('linked_milestone'),
@@ -126,6 +136,18 @@ def get_test_milestone_insight_graph_tool(params_dict):
         insight[cycle.test_group] = dict(Counter(merge_dict))
     ret = generate_axis_data(insight, 1)
     return ret
+
+
+def get_test_milestone_insight_graph_free_test_tool(params_dict):
+    cycles = get_test_cycle_for_graph(
+        {
+            'linked_milestone': params_dict.get('linked_milestone'),
+            'test_scenario': params_dict.get('test_scenario'),
+        }
+    )
+    for cycle in cycles:
+        get_free_test_status(cycle, query_type='tester')
+    return
 
 
 def get_test_milestone_group_graph_tool(params_dict):
@@ -177,7 +199,6 @@ def generate_axis_data(insight, ret_type):
 
 
 def get_test_cycle_for_graph(params_dict):
-    print(params_dict)
     filter_list = [getattr(MantisTestCycle, key) == value for key, value in params_dict.items()]
     query_list = [
         MantisTestCycle.id,
@@ -231,6 +252,15 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
         else:
             ret[result] = count if result not in ret.keys() else ret[result] + count
     return ret
+
+
+def get_free_test_status(cycle, query_type=None):
+    for free_test_item in cycle.free_test_items:
+        status = free_test_item.get('status')
+        if query_type == 'group':
+            key = cycle.test_group
+        elif query_type == 'tester':
+            key = free_test_item.get('tester')
 
 
 def parse_case_filter_config(filter_config):

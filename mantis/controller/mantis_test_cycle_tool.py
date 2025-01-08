@@ -59,7 +59,7 @@ def mantis_edit_test_cycle_tool(request_params):
     for key in ['start_date', 'due_date']:
         if not request_params.get(key):
             continue
-        if len(key.split('-')) == 2:
+        if len(request_params.get(key).split('-')) == 2:
             request_params[key] = get_dates_by_week(request_params.get(key))
     request_params['free_test_item'] = free_test_item
     update_tool(update_dict, request_params, update_key, mtc)
