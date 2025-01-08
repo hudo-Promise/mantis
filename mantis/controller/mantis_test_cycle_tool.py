@@ -8,7 +8,7 @@ from common_tools.tools import (
 )
 from config.basic_setting import FORMAT_DATE
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
-    get_case_current_result, get_test_cycle_for_graph, deal_week_time, calculate_label
+    get_case_current_result, get_test_cycle_for_graph, deal_week_time, calculate_label, generate_axis_data
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult
 from mantis.models.mantis_test_milestone_cycle import MantisTestCycle
@@ -169,35 +169,15 @@ def mantis_delete_test_cycle_tool(request_params):
 
 def mantis_get_test_cycle_insight_graph_tool(params_dict):
     query_type = params_dict.get('query_type')
-    mtc = get_test_cycle_for_graph(
-        {'id': params_dict.get('id')}
-    )
+    mtc = get_test_cycle_for_graph({'id': params_dict.get('id')})
     result = get_case_current_result(mtc.filter_config, mtc.id, query_type=query_type)
-    axis = sorted([key for key in result.keys()])
-    ret = {
-        'function': {
-            'axis': [0] + axis,
-            '1': [0],
-            '2': [0],
-            '3': [0],
-            '4': [0],
-            '5': [0]
-        },
-        'tester': {
-            'axis': axis,
-            '1': [],
-            '2': [],
-            '3': [],
-            '4': [],
-            '5': []
-        }
-    }
-    for axis_key in axis:
-        for key, value in result.get(axis_key).items():
-            if query_type == 'function':
-                ret[query_type][str(key)][0] += value
-            ret[query_type][str(key)].append(value)
-    return ret.get(query_type)
+    if query_type == 'function':
+        ret = generate_axis_data(result, 1)
+    elif query_type == 'tester':
+        ret = generate_axis_data(result, 2)
+    else:
+        ret = {}
+    return ret
 
 
 def mantis_get_test_cycle_burnout_diagram_tool(params_dict):

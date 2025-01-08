@@ -119,19 +119,13 @@ def get_test_milestone_insight_graph_tool(params_dict):
         }
     )
     insight = {}
-    if params_dict.get('test_scenario') == 1:
-        for cycle in cycles:
-            if cycle.test_group not in insight.keys():
-                insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-            for result_id, result_count in get_case_current_result(cycle.filter_config, cycle.id).items():
-                insight[cycle.test_group] = dict(Counter(insight.get(cycle.test_group)) + Counter(result_count))
-    elif params_dict.get('test_scenario') == 2:
-        for cycle in cycles:
-            if cycle.test_group not in insight.keys():
-                insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-            for item in cycle.free_test_item:
-                insight[cycle.test_group][item.get('status')] += 1
-    return insight
+    for cycle in cycles:
+        if cycle.test_group not in insight.keys():
+            insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        merge_dict = {**insight.get(cycle.test_group), **get_case_current_result(cycle.filter_config, cycle.id)}
+        insight[cycle.test_group] = dict(Counter(merge_dict))
+    ret = generate_axis_data(insight, 1)
+    return ret
 
 
 def get_test_milestone_group_graph_tool(params_dict):
@@ -139,26 +133,51 @@ def get_test_milestone_group_graph_tool(params_dict):
         {
             'linked_milestone': params_dict.get('linked_milestone'),
             'test_scenario': params_dict.get('test_scenario'),
-            'group_id': params_dict.get('group_id'),
+            'test_group': params_dict.get('test_group'),
         }
     )
     insight = {}
     for cycle in cycles:
-        if params_dict.get('test_scenario') == 1:
-            for func_id, result_count in get_case_current_result(
-                    cycle.filter_config, cycle.id, 'function').items():
-                if func_id not in insight.keys():
-                    insight[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-                insight[func_id] = dict(Counter(insight.get(func_id)) + Counter(result_count))
-        elif params_dict.get('test_scenario') == 2:
-            for item in cycle.free_test_item:
-                if item.get('tester') not in insight.keys():
-                    insight[item.get('tester')] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-                insight[item.get('tester')][item.get('status')] += 1
-    return insight
+        for func_id, result_count in get_case_current_result(
+                cycle.filter_config, cycle.id, 'function').items():
+            if func_id not in insight.keys():
+                insight[func_id] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+            merge_dict = {**insight.get(func_id), **result_count}
+            insight[func_id] = dict(Counter(merge_dict))
+    ret = generate_axis_data(insight, 1)
+    return ret
+
+
+def generate_axis_data(insight, ret_type):
+    axis = sorted([key for key in insight.keys()])
+    ret = {
+        1: {
+            'axis': [0] + axis,
+            '1': [0],
+            '2': [0],
+            '3': [0],
+            '4': [0],
+            '5': [0]
+        },
+        2: {
+            'axis': axis,
+            '1': [],
+            '2': [],
+            '3': [],
+            '4': [],
+            '5': []
+        }
+    }
+    for axis_key in axis:
+        for key, value in insight.get(axis_key).items():
+            if ret_type == 1:
+                ret[ret_type][str(key)][0] += value
+            ret[ret_type][str(key)].append(value)
+    return ret.get(ret_type)
 
 
 def get_test_cycle_for_graph(params_dict):
+    print(params_dict)
     filter_list = [getattr(MantisTestCycle, key) == value for key, value in params_dict.items()]
     query_list = [
         MantisTestCycle.id,
@@ -186,7 +205,6 @@ def get_case_current_result(filter_config, cycle_id, query_type=None):
     ).subquery()
     cr_alias = aliased(subquery, name='cr')
     common_query_list = [
-        # func.max(TestCase.id).label('id'),
         func.max(cr_alias.c.test_result).label('test_result'),
         func.count(1).label('count')
     ]
