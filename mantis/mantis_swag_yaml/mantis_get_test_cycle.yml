@@ -24,7 +24,8 @@ parameters:
           type: string
           example: xxxx-xx-xx
         status:
-          type: integer
+          type: array
+          example: []
         group_by:
           type: string
           example: 'linked_milestone/test_scenario'

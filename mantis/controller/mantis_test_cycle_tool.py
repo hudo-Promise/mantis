@@ -1,5 +1,6 @@
 import time
 
+from sqlalchemy import Integer
 from sqlalchemy.sql import func
 
 from common_tools.tools import (
@@ -86,13 +87,13 @@ def mantis_get_test_cycle_tool(request_params):
     current_time = create_current_format_time()
     filter_list = [MantisTestCycle.cluster == request_params.get('cluster')]
     if request_params.get('start_date') and request_params.get('due_date'):
-        for key in ['start_date', 'due_date']:
-            request_params[key] = get_dates_by_week(request_params.get(key))
         filter_list.append(MantisTestCycle.start_date >= request_params.get('start_date'))
         filter_list.append(MantisTestCycle.due_date <= request_params.get('due_date'))
     if request_params.get('tester'):
         filter_list.append(
-            func.JSON_EXTRACT(MantisTestCycle.free_test_item, '$[0].tester') == request_params.get('tester')
+            func.JSON_EXTRACT(
+                MantisTestCycle.free_test_item, '$[0].tester'
+            ).cast(Integer).in_(request_params.get('tester'))
         )
     if request_params.get('status'):
         filter_list.append(getattr(MantisTestCycle, request_params.get('status')) == request_params.get('status'))
