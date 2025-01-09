@@ -16,7 +16,8 @@ parameters:
           type: integer
           example: 1
         tester:
-          type: integer
+          type: array
+          example: []
         start_date:
           type: string
           example: xxxx-xx-xx
@@ -24,8 +25,7 @@ parameters:
           type: string
           example: xxxx-xx-xx
         status:
-          type: array
-          example: []
+          type: integer
         group_by:
           type: string
           example: 'linked_milestone/test_scenario'
