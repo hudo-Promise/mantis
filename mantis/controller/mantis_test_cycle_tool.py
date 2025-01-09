@@ -264,7 +264,11 @@ def mantis_test_cycle_work_report_tool():
     ret = {}
     for row in rows:
         if row.tester not in ret.keys():
-            ret[row.tester] = {}
-        if row.upgrade_time not in ret[row.tester].keys():
-            ret[row.tester][row.upgrade_time] = row.count
-    return ret
+            ret[row.tester] = {i: 0 for i in range(1, 13)}
+        ret[row.tester][int(row.upgrade_time[6:])] = row.count
+    axis = sorted(ret.keys())
+    month_data = {i: [] for i in range(1, 13)}
+    for user in axis:
+        for i in range(1, 13):
+            month_data[i].append(ret[user][i])
+    return {'axis': axis, 'month_data': month_data}
