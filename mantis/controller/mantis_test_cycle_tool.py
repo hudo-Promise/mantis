@@ -98,11 +98,12 @@ def mantis_get_test_cycle_tool(request_params):
     filter_list.append(getattr(MantisTestCycle, 'status') == request_params.get('status', 1))
     mtc_list = MantisTestCycle.query.filter(*filter_list).all()
     ret = {}
+    group_by_key = request_params.get('group_by', 'linked_milestone')
     for mtc in mtc_list:
         cur_mtc = generate_test_cycle_tool(current_time, mtc)
-        if cur_mtc.get(request_params.get('group_by', 'linked_milestone')) not in ret.keys():
-            ret[cur_mtc.get(request_params.get('group_by', 'linked_milestone'))] = []
-        ret[cur_mtc.get(request_params.get('group_by', 'linked_milestone'))].append(cur_mtc)
+        if cur_mtc.get(group_by_key) not in ret.keys():
+            ret[cur_mtc.get(group_by_key)] = []
+        ret[cur_mtc.get(group_by_key)].append(cur_mtc)
     return ret
 
 
