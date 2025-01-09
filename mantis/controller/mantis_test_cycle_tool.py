@@ -244,7 +244,10 @@ def mantis_get_test_cycle_pie_chart_tool(params_dict):
     ret = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for free_test_item in mtc.free_test_item:
         ret[free_test_item.get('status')] += 1
-    return {{'value': value, 'free_item_status': key} for key, value in ret.items()}
+    status_num = {}
+    for key, value in ret.items():
+        status_num[key] = value
+    return status_num
 
 
 def mantis_test_cycle_work_report_tool():
