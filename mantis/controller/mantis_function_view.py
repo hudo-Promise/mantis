@@ -33,8 +33,8 @@ def mantis_create_functions():
 @swag_from('../mantis_swag_yaml/mantis_edit_functions.yml')
 @function_blueprint.route('/mantis/edit/functions', methods=['POST'])
 def mantis_edit_functions():
-    mantis_edit_functions_tool(request.json)
-    resp = response(200)
+    code = mantis_edit_functions_tool(request.json)
+    resp = response(code)
     return jsonify(resp)
 
 
