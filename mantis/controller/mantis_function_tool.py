@@ -278,7 +278,7 @@ def generate_check_field(field):
 
 
 def mantis_check_function_exists_tool(model, key, field, value):
-    count = model.get(key).query.filter(getattr(model, field) == value).count()
+    count = model.get(key).query.filter(getattr(model.get(key), field) == value).count()
     return True if count > 0 else False
 
 
