@@ -103,13 +103,18 @@ def upload_hcp3_version_data(version, trans_list_data):
             "file": (
                 filename, virtual_workbook, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")})
         response = requests.post(KPM_HCP3_PERF_API, data=m, headers={'Content-Type': m.content_type}, timeout=20)
-        res = response.json()
-        if res.get('msg') == '上传文件成功':
-            return {'sync_status': 'success', 'sync_version': version, 'sync_num': len(trans_list_data) - 1}, 1
+        if response.status_code == 200:
+            res = response.json()
+            if res.get('msg') == '上传文件成功':
+                return {'sync_status': 'success', 'sync_version': version, 'sync_num': len(trans_list_data) - 1}, 1
+            else:
+                return {'sync_status': 'failed', 'sync_version': version, 'sync_num': len(trans_list_data) - 1}, 0
         else:
-            return {'sync_status': 'failed', 'sync_version': version, 'sync_num': len(trans_list_data) - 1}, 0
+            return {'sync_status': 'failed', 'sync_version': version, 'sync_num': len(trans_list_data) - 1,
+                    'msg': 'kpm net error'}, 0
 
     except:
+        global_logger.error(traceback.format_exc())
         return {'sync_status': 'error', 'sync_version': version, 'sync_num': len(trans_list_data) - 1,
                 'error_msg': traceback.format_exc()}, 0
 
