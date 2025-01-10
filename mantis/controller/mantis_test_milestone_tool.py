@@ -78,6 +78,7 @@ def generate_test_milestone_tool(current_time, mtm):
             get_gap_days(f'{mtm.start_date} 00:00:00', current_time) + 1,
             0.9
         ),  # TODO
+        'actual_finish_date': mtm.actual_finish_date,
         'create_time': str(mtm.create_time),
         'update_time': str(mtm.update_time),
     }

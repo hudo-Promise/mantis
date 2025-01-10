@@ -11,6 +11,7 @@ class MantisTestMileStone(mantis_db.Model):
     status = mantis_db.Column(mantis_db.Integer, nullable=False, comment='状态')
     start_date = mantis_db.Column(mantis_db.String(16), nullable=True, comment='开始日期')
     due_date = mantis_db.Column(mantis_db.String(16), nullable=True, comment='截至日期')
+    actual_finish_date = mantis_db.Column(mantis_db.String(16), nullable=True, comment='实际完成日期')
     create_time = mantis_db.Column(mantis_db.DateTime, nullable=False, comment='创建时间')
     update_time = mantis_db.Column(mantis_db.DateTime, nullable=False, comment='更新时间')
 

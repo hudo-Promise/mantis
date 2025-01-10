@@ -315,16 +315,17 @@ create_mantis_filter_record_sql = """
 create_mantis_test_milestone_sql = """
     create table if not exists `mantis_test_milestone`
 (
-    `id`                int auto_increment comment '主键' primary key,
-    `name`              varchar(64) null comment 'test milestone name',
-    `description`       text null comment '描述',
-    `project`           int null comment '项目',
-    `cluster`           int null comment '集群',
-    `status`            int null comment '状态',
-    `start_date`        varchar(16) null comment '开始日期',
-    `due_date`          varchar(16) null comment '截至日期',
-    `create_time`       datetime null comment '创建时间',
-    `update_time`       datetime null comment '更新时间'
+    `id`                    int auto_increment comment '主键' primary key,
+    `name`                  varchar(64) null comment 'test milestone name',
+    `description`           text null comment '描述',
+    `project`               int null comment '项目',
+    `cluster`               int null comment '集群',
+    `status`                int null comment '状态',
+    `start_date`            varchar(16) null comment '开始日期',
+    `due_date`              varchar(16) null comment '截至日期',
+    `actual_finish_date`    varchar(16) null comment '实际完成日期',
+    `create_time`           datetime null comment '创建时间',
+    `update_time`           datetime null comment '更新时间'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4;
 """
 
