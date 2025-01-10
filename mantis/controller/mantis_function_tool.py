@@ -47,7 +47,8 @@ def mantis_create_functions_tool(request_params):
     }
     check_field, param_field = generate_check_field(field)
     if mantis_check_function_exists_tool(
-        model_dict.get(field),
+        model_dict,
+        field,
         check_field,
         request_params.get(param_field)
     ):
@@ -268,8 +269,8 @@ def generate_check_field(field):
         return f'{field}_name', f'{field}_name'
 
 
-def mantis_check_function_exists_tool(model, field, value):
-    count = model.query.filter(getattr(model, field) == value).count()
+def mantis_check_function_exists_tool(model, key, field, value):
+    count = model.get(key).query.filter(getattr(model, field) == value).count()
     return True if count > 0 else False
 
 
@@ -293,7 +294,3 @@ def mantis_check_function_used_tool(field, value):
         if count_1 == 0:
             flag = False
     return flag
-
-
-
-
