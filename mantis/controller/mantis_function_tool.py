@@ -102,7 +102,7 @@ def mantis_edit_functions_tool(request_params):
         check_field,
         request_params.get(param_field)
     ):
-        return False, 10017
+        return 10017
     update_model = {
         'group': {
             'group_name': request_params.get('group_name')
@@ -130,6 +130,7 @@ def mantis_edit_functions_tool(request_params):
     ).update(update_model.get(field))
     mantis_db.session.commit()
     mantis_update_field_mapping_rule()
+    return 200
 
 
 def mantis_delete_functions_tool(request_params):
