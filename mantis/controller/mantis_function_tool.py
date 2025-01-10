@@ -95,6 +95,14 @@ def mantis_edit_functions_tool(request_params):
         'fuLi_group': MantisFuLiGroup,
         'fuLi': MantisFuLi,
     }
+    check_field, param_field = generate_check_field(field)
+    if mantis_check_function_exists_tool(
+        model_dict,
+        field,
+        check_field,
+        request_params.get(param_field)
+    ):
+        return False, 10017
     update_model = {
         'group': {
             'group_name': request_params.get('group_name')
