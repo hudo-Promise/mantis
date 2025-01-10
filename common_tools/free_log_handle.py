@@ -55,7 +55,7 @@ def get_log_data(request, resp):
 @async_task
 def async_send_free_log(log_data):
     try:
-        requests.post(FREE_LOG_API, json=log_data, timeout=10)
+        res = requests.post(FREE_LOG_API, json=log_data, timeout=10)
     except:
         global_logger.error(traceback.format_exc())
 
