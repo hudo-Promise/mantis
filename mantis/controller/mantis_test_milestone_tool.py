@@ -129,6 +129,8 @@ def get_test_milestone_insight_graph_test_case_tool(params_dict):
     )
     insight = {}
     for cycle in cycles:
+        if not cycle.filter_config:
+            continue
         if cycle.test_group not in insight.keys():
             insight[cycle.test_group] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
         for key, value in get_case_current_result(cycle.filter_config, cycle.id).items():
