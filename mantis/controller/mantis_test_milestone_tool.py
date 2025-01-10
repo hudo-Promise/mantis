@@ -176,6 +176,8 @@ def get_test_milestone_group_graph_test_case_tool(params_dict):
     )
     insight = {}
     for cycle in cycles:
+        if not cycle.filter_config:
+            continue
         dictionary_accumulator(
             insight,
             get_case_current_result(cycle.filter_config, cycle.id, 'function')
