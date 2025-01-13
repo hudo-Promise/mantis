@@ -29,7 +29,7 @@ def get_config_for_hcp3():
     return hcp3_config_dict, test_platform_dict, test_carline_dict
 
 
-def get_sync_case_data(test_sw=None):
+def get_sync_case_data(test_sw_list=None):
     case_filter_list = [
         TestCase.cluster.in_([1, 4]), TestCase.sub_function == 65, TestCase.level == 2
     ]
@@ -38,8 +38,8 @@ def get_sync_case_data(test_sw=None):
     case_result_filter_list = [
         CaseResult.m_id.in_(list(hcp3_case_dict.keys())), CaseResult.test_result.in_([1, 2, 3])
     ]
-    if test_sw:
-        case_result_filter_list.append(CaseResult.test_sw == test_sw)
+    if test_sw_list:
+        case_result_filter_list.append(CaseResult.test_sw.in_(test_sw_list))
     hcp3_case_result_objs = CaseResult.query.filter(*case_result_filter_list).all()
     return hcp3_case_dict, hcp3_case_result_objs
 
@@ -132,14 +132,14 @@ def upload_hcp3_data(trans_result):
 
 
 @async_task_new('mantis')
-def run_sync_mantis_hcp3_data_to_kpm(test_sw=None):
+def run_sync_mantis_hcp3_data_to_kpm(test_sw_list=None):
     """同步mantis所有符合条件的数据（hcp3）到kpm"""
     log_time = str(datetime.now())
     try:
         # 读取配置
         hcp3_config_dict, test_platform_dict, test_carline_dict = get_config_for_hcp3()
         # 获取传输数据
-        hcp3_case_dict, hcp3_case_result_objs = get_sync_case_data(test_sw)
+        hcp3_case_dict, hcp3_case_result_objs = get_sync_case_data(test_sw_list)
         trans_headers = get_sync_headers()
         # 生成传输数据结构
         trans_result = get_upload_hcp3_data_dict(hcp3_case_dict, hcp3_case_result_objs, hcp3_config_dict,
