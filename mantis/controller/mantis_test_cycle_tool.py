@@ -1,3 +1,4 @@
+import json
 import time
 
 from sqlalchemy import Integer
@@ -5,7 +6,7 @@ from sqlalchemy.sql import func
 
 from common_tools.tools import (
     create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, generate_week_str,
-    get_dates_by_week, generate_dates
+    get_dates_by_week, generate_dates, op11_redis_client
 )
 from config.basic_setting import FORMAT_DATE
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
@@ -111,13 +112,16 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
     current_time = create_current_format_time()
     filter_list = [MantisTestCycle.linked_milestone == request_params.get('linked_milestone')]
     mtc_list = MantisTestCycle.query.filter(*filter_list).order_by(MantisTestCycle.test_group).all()
-    group_line = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
-    cycle_group = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
+    group_line, cycle_group = {}, {}
     for mtc in mtc_list:
-        cur_mtc = generate_test_cycle_tool(current_time, mtc)
-        cycle_group[mtc.test_group].append(cur_mtc)
+        if mtc.test_group not in cycle_group.keys():
+            cycle_group[mtc.test_group] = []
+        if mtc.test_group not in group_line.keys():
+            group_line[mtc.test_group] = 0
         if mtc.line > group_line.get(mtc.test_group, 0):
             group_line[mtc.test_group] = mtc.line
+        cur_mtc = generate_test_cycle_tool(current_time, mtc)
+        cycle_group[mtc.test_group].append(cur_mtc)
     ret = {
         'cycle_group': cycle_group,
         'group_line': group_line,
@@ -273,3 +277,13 @@ def mantis_test_cycle_work_report_tool():
         for i in range(1, 13):
             month_data[i].append(ret[user][i])
     return {'axis': axis, 'month_data': month_data}
+
+
+def mantis_get_test_cycle_group_info_tool():
+    mtc_groups = mantis_db.session.query(MantisTestCycle.test_group).group_by(MantisTestCycle.test_group).all()
+    op11_group_info = json.loads(op11_redis_client.get('tms_dept_and_group_info')).get('groups')
+    result ={}
+    for mtc_group in mtc_groups:
+        group_id = mtc_group.test_group
+        result[group_id] = op11_group_info.get(str(group_id)).get('group')
+    return result
