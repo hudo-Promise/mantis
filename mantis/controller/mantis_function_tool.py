@@ -295,7 +295,7 @@ def mantis_check_function_used_tool(field, value):
         if count_1 == 0:
             flag = False
     elif field.endswith('fuLi_group'):
-        count_1 = MantisFuLi.query.filter(MantisFuLi.fuLi_group_id == value).count()
+        count_1 = MantisFuLi.query.filter(MantisFuLi.fuLi_group_id == value, MantisFuLi.delete_flag == 1).count()
         if count_1 == 0:
             flag = False
     elif field.endswith('fuLi'):
