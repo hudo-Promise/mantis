@@ -27,9 +27,8 @@ def query_functions():
         }
     sub_functions = mantis_db.session.query(SubFunction).all()
     for sub_function in sub_functions:
-        func_dict[
-            str(sub_function.test_group)
-        ]['function'][str(sub_function.function)]['sub_function'][str(sub_function.id)] = {
+        func_dict[str(sub_function.test_group)]['function'][
+            str(sub_function.function)]['sub_function'][str(sub_function.id)] = {
             'sub_function_id': sub_function.id,
             'sub_function_name': sub_function.sub_function,
         }
