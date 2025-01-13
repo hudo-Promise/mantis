@@ -280,10 +280,9 @@ def mantis_test_cycle_work_report_tool():
 
 
 def mantis_get_test_cycle_group_info_tool():
-    mtc_groups = mantis_db.session.query(MantisTestCycle.test_group).group_by(MantisTestCycle.test_group).all()
+    mtc_groups = [2, 3, 4, 5, 6, 7]
     op11_group_info = json.loads(op11_redis_client.get('tms_dept_and_group_info')).get('groups')
-    result ={}
-    for mtc_group in mtc_groups:
-        group_id = mtc_group.test_group
+    result = {}
+    for group_id in mtc_groups:
         result[group_id] = op11_group_info.get(str(group_id)).get('group')
     return result
