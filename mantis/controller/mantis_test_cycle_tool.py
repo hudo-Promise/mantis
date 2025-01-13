@@ -116,7 +116,7 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
     group_line, cycle_group = {}, {}
     for group_id in mtc_groups:
         group_line[group_id] = 0
-        cycle_group[group_id] = 0
+        cycle_group[group_id] = []
     for mtc in mtc_list:
         if mtc.test_group not in cycle_group.keys():
             cycle_group[mtc.test_group] = []
