@@ -314,3 +314,6 @@ status_template = {
     4: 0,
     5: 0
 }
+
+
+mtc_groups = [2, 3, 4, 5, 6, 7]

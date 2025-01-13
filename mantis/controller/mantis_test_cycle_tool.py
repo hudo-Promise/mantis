@@ -11,6 +11,7 @@ from common_tools.tools import (
 from config.basic_setting import FORMAT_DATE
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
     get_case_current_result, get_test_cycle_for_graph, deal_week_time, calculate_label, generate_axis_data
+from mantis.mantis_status import mtc_groups
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult
 from mantis.models.mantis_test_milestone_cycle import MantisTestCycle
@@ -113,6 +114,9 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
     filter_list = [MantisTestCycle.linked_milestone == request_params.get('linked_milestone')]
     mtc_list = MantisTestCycle.query.filter(*filter_list).order_by(MantisTestCycle.test_group).all()
     group_line, cycle_group = {}, {}
+    for group_id in mtc_groups:
+        group_line[group_id] = 0
+        cycle_group[group_id] = 0
     for mtc in mtc_list:
         if mtc.test_group not in cycle_group.keys():
             cycle_group[mtc.test_group] = []
@@ -280,7 +284,6 @@ def mantis_test_cycle_work_report_tool():
 
 
 def mantis_get_test_cycle_group_info_tool():
-    mtc_groups = [2, 3, 4, 5, 6, 7]
     op11_group_info = json.loads(op11_redis_client.get('tms_dept_and_group_info')).get('groups')
     result = {}
     for group_id in mtc_groups:
