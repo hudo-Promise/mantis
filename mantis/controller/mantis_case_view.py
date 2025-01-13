@@ -9,7 +9,7 @@ from mantis.controller.mantis_case_tool import get_digital_map_case_func, edit_c
     update_digital_map_case_func, delete_case_func, get_case_func, download_file, upload_file_func, \
     mantis_create_filter_config_tool, mantis_edit_filter_config_tool, mantis_delete_filter_config_tool, \
     mantis_get_filter_config_tool, get_case_result_tool, mantis_get_sw_tool, mantis_generate_case_format_string_tool, \
-    edit_case_result_func, create_case_result_func, case_result_aug_func
+    edit_case_result_func, create_case_result_func, case_result_aug_func, case_trans_kpm
 from mantis.mantis_status.status_code import response
 
 case_blueprint = Blueprint('case', __name__)
@@ -168,4 +168,11 @@ def mantis_edit_case_result():
 @case_blueprint.route('/mantis/case/result/aug', methods=['POST'])
 def mantis_case_result_aug():
     code, ret = case_result_aug_func(request.json)
+    return response(code, ret)
+
+
+@swag_from('../mantis_swag_yaml/mantis_case_trans_kpm.yml')
+@case_blueprint.route('/mantis/case/trans/kpm', methods=['POST'])
+def mantis_case_trans_kpm():
+    code, ret = case_trans_kpm()
     return response(code, ret)

@@ -79,6 +79,13 @@ NOT_LOG_PATH = [
     '/apispecification.json',
 ]
 
+KPM_HCP3_PERF_API_DICT = {
+    'product': 'http://172.16.50.3:9528/kpm-api/api/perf/upload/',
+    'develop': 'http://172.16.51.2:8089/kpm-api-test/api/perf/upload/',
+    'testing': 'http://172.16.51.2:8089/kpm-api-test/api/perf/upload/'
+}
+KPM_HCP3_PERF_API = KPM_HCP3_PERF_API_DICT.get(SERVICE_MODE)
+
 db_dict = {
     'mantis': 'mantis_db',
 }
