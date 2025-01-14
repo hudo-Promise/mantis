@@ -311,6 +311,8 @@ def get_free_test_status(cycle, query_type=None):
 
 
 def parse_case_filter_config(filter_config):
+    if not isinstance(filter_config, dict):
+        return None
     filter_list = []
     case_column_dict = TestCase.get_field_dict()
     for key, values in filter_config.items():

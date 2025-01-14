@@ -2,6 +2,7 @@ import json
 import time
 
 from sqlalchemy import Integer
+from sqlalchemy.orm import aliased
 from sqlalchemy.sql import func
 
 from common_tools.tools import (
@@ -126,10 +127,7 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
             group_line[mtc.test_group] = mtc.line
         cur_mtc = generate_test_cycle_tool(current_time, mtc)
         cycle_group[mtc.test_group].append(cur_mtc)
-    ret = {
-        'cycle_group': cycle_group,
-        'group_line': group_line,
-    }
+    ret = {'cycle_group': cycle_group, 'group_line': group_line}
     return ret
 
 
@@ -158,7 +156,7 @@ def generate_test_cycle_tool(current_time, mtc):
         'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
         'time_to_finish': calculate_time_to_finish(
             get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
-            0.9
+            mtc.progress
         ),  # TODO
         'line': mtc.line,
         'create_time': str(mtc.create_time),
@@ -289,3 +287,78 @@ def mantis_get_test_cycle_group_info_tool():
     for group_id in mtc_groups:
         result[group_id] = op11_group_info.get(str(group_id)).get('group')
     return result
+
+
+def mantis_get_test_case_by_test_cycle_tool(param_dict):
+    cycle_id = param_dict.get('cycle_id')
+    cycle = get_test_cycle_for_graph({'id': cycle_id})
+    filter_list = parse_case_filter_config(cycle.filter_config)
+    if not filter_list:
+        return None
+    subquery = mantis_db.session.query(
+        CaseResult.m_id,
+        CaseResult.test_sw,
+        CaseResult.test_result,
+        CaseResult.test_platform,
+        CaseResult.test_carline,
+        CaseResult.test_variant,
+        CaseResult.test_market,
+        CaseResult.test_language,
+        CaseResult.test_environment,
+        CaseResult.tb_type,
+        CaseResult.issue_descr,
+        CaseResult.tester
+    ).filter(
+        CaseResult.cycle_id == cycle_id
+    ).subquery()
+    cr_alias = aliased(subquery, name='cr')
+    cases = mantis_db.session.query(
+        TestCase.id,
+        TestCase.title,
+        TestCase.function,
+        TestCase.sub_function,
+        cr_alias.c.test_sw,
+        cr_alias.c.test_result,
+        cr_alias.c.test_platform,
+        cr_alias.c.test_carline,
+        cr_alias.c.test_variant,
+        cr_alias.c.test_market,
+        cr_alias.c.test_language,
+        cr_alias.c.test_environment,
+        cr_alias.c.tb_type,
+        cr_alias.c.issue_descr,
+        cr_alias.c.tester
+    ).select_from(TestCase).join(
+        cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
+    ).filter(*filter_list).all()
+    ret = {
+        'assigned': [],
+        'unassigned': [],
+    }
+    for case in cases:
+        case = generate_case_for_cycle(case)
+        if case.get('test_result') is None:
+            ret['unassigned'].append(case)
+        else:
+            ret['assigned'].append(case)
+    return ret
+
+
+def generate_case_for_cycle(case):
+    return {
+        'id': case.id,
+        'title': case.title,
+        'function': case.function,
+        'sub_function': case.sub_function,
+        'test_sw': case.test_sw,
+        'test_result': case.test_result,
+        'test_platform': case.test_platform,
+        'test_carline': case.test_carline,
+        'test_variant': case.test_variant,
+        'test_market': case.test_market,
+        'test_language': case.test_language,
+        'test_environment': case.test_environment,
+        'tb_type': case.tb_type,
+        'issue_descr': case.issue_descr,
+        'tester': case.tester
+    }
