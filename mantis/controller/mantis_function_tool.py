@@ -281,8 +281,7 @@ def mantis_check_function_exists_tool(model, key, field, value):
     filter_list = [getattr(model.get(key), field) == value]
     if field == 'fuLi_id':
         filter_list.append(MantisFuLi.delete_flag == 1)
-
-    count = model.get(key).query.filter(getattr(model.get(key), field) == value).count()
+    count = model.get(key).query.filter(*filter_list).count()
     return True if count > 0 else False
 
 
