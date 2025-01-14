@@ -10,6 +10,18 @@ parameters:
     in: query
     type: integer
     required: true
+  - name: query_type
+    in: query
+    type: integer
+    required: true
+  - name: page_num
+    in: query
+    type: integer
+    required: true
+  - name: page_size
+    in: query
+    type: integer
+    required: true
 
 responses:
   200:

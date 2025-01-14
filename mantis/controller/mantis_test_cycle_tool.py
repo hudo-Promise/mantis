@@ -295,6 +295,9 @@ def mantis_get_test_cycle_group_info_tool():
 
 def mantis_get_test_case_by_test_cycle_tool(param_dict):
     cycle_id = param_dict.get('cycle_id')
+    page_num = int(param_dict.get('page_num'))
+    page_size = int(param_dict.get('page_size'))
+    query_type = int(param_dict.get('query_type'))
     cycle = get_test_cycle_for_graph({'id': cycle_id})
     filter_list = parse_case_filter_config(cycle.filter_config)
     if not filter_list:
@@ -316,6 +319,10 @@ def mantis_get_test_case_by_test_cycle_tool(param_dict):
         CaseResult.cycle_id == cycle_id
     ).subquery()
     cr_alias = aliased(subquery, name='cr')
+    if query_type == 1:
+        filter_list.append(cr_alias.c.test_result.isnot(None))
+    elif query_type == 2:
+        filter_list.append(cr_alias.c.test_result.is_(None))
     cases = mantis_db.session.query(
         TestCase.id,
         TestCase.title,
@@ -334,18 +341,17 @@ def mantis_get_test_case_by_test_cycle_tool(param_dict):
         cr_alias.c.tester
     ).select_from(TestCase).join(
         cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
-    ).filter(*filter_list).all()
-    ret = {
-        'assigned': [],
-        'unassigned': [],
-    }
+    ).filter(*filter_list).offset((page_num - 1) * page_size).limit(page_size).all()
+    total = mantis_db.session.query(
+        TestCase.id,
+    ).select_from(TestCase).join(
+        cr_alias, TestCase.id == cr_alias.c.m_id, isouter=True
+    ).filter(*filter_list).count()
+    ret = []
     for case in cases:
         case = generate_case_for_cycle(case)
-        if case.get('test_result') is None:
-            ret['unassigned'].append(case)
-        else:
-            ret['assigned'].append(case)
-    return ret
+        ret.append(case)
+    return {'case': ret, 'total': total}
 
 
 def generate_case_for_cycle(case):
