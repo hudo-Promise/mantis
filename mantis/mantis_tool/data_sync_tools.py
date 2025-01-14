@@ -73,7 +73,7 @@ def get_upload_hcp3_data_dict(hcp3_case_dict, hcp3_case_result_objs, hcp3_config
         if hcp3_case_result_obj.test_result == 3:
             time = 'TB'
         else:
-            time = hcp3_case_result_obj.extra_1
+            time = str(hcp3_case_result_obj.extra_1).replace('ms','')
         car_model = test_platform_dict.get(str(hcp3_case_result_obj.test_platform))
         test_time = datetime.strftime(hcp3_case_result_obj.create_time, "%Y/%m/%d")
         car_id = test_carline_dict.get(str(hcp3_case_result_obj.test_carline))
