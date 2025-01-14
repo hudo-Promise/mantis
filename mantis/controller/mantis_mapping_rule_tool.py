@@ -70,7 +70,7 @@ def mantis_get_mapping_rule_tool(request_params):
     project = request_params.get('project')
     filter_list = []
     if project:
-        filter_list.append(MantisMappingRule.project_id == project)
+        filter_list.append(MantisMappingRule.project == project)
     mcm = MantisMappingRule.query.filter(
         *filter_list
     ).order_by(
