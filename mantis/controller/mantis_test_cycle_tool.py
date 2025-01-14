@@ -154,10 +154,14 @@ def generate_test_cycle_tool(current_time, mtc):
         'free_test_item': mtc.free_test_item,
         'status': mtc.status,
         'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
+        # 'time_to_finish': calculate_time_to_finish(
+        #     get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
+        #     mtc.progress
+        # ) if mtc.progress != 0 else 0,
         'time_to_finish': calculate_time_to_finish(
             get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
-            mtc.progress
-        ),  # TODO
+            0.9
+        ),
         'line': mtc.line,
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
