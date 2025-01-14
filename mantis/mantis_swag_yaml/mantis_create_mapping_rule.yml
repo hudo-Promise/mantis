@@ -13,6 +13,8 @@ parameters:
       properties:
         mapping_name:
           type: string
+        project:
+          type: integer
         function:
           type: array
           example: [1]
