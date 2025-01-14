@@ -29,6 +29,8 @@ parameters:
         group_by:
           type: string
           example: 'linked_milestone/test_scenario'
+        test_group:
+          type: integer
 
 
 responses:

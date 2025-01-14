@@ -98,6 +98,8 @@ def mantis_get_test_cycle_tool(request_params):
                 MantisTestCycle.free_test_item, '$[0].tester'
             ).cast(Integer).in_(request_params.get('tester'))
         )
+    if request_params.get('test_group'):
+        filter_list.append(MantisTestCycle.test_group == request_params.get('test_group'))
     filter_list.append(getattr(MantisTestCycle, 'status') == request_params.get('status', 1))
     mtc_list = MantisTestCycle.query.filter(*filter_list).all()
     ret = {}
