@@ -167,6 +167,8 @@ def activate_case_result(curr):
             'extra_1': case_result.get('extra_1'),
             'extra_2': case_result.get('extra_2'),
             'extra_3': case_result.get('extra_3'),
+            'tester': case_result.get('tester'),
+            'cycle_id': case_result.get('cycle_id'),
             'create_time': str(case_result.get('create_time')),
             'upgrade_time': str(case_result.get('upgrade_time')),
         }
