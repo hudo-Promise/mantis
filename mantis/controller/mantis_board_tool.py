@@ -6,6 +6,7 @@ from mantis.controller.mantis_card_tool import delete_card_func, query_card_func
 from mantis.controller.mantis_milestone_tool import delete_milestone_by_id, query_milestone, create_milestone
 from mantis.models import mantis_db
 from mantis.models.boards import Board, MileStone, Card, BoardLocation
+from mantis.models.mantis_config import MantisMappingRule
 
 
 def create_board(request_params):
@@ -124,6 +125,9 @@ def get_board_func(request_params):
         board_data = Board.query.filter(*query_filter).all()
     data = []
     dashboard = get_dashboard_content()
+
+    mapping_rule = mantis_db.session.query(MantisMappingRule.id, MantisMappingRule.cluster_id).all()
+    cluster2mapping_rule = {rule.cluster_id: rule.id for rule in mapping_rule}
     for item in board_data:
         current_dashboard = {
             'id': item.id,
@@ -133,6 +137,7 @@ def get_board_func(request_params):
             'name': item.name,
             'desc': item.description,
             'cluster': item.cluster,
+            'mapping_rule': cluster2mapping_rule.get(item.cluster),
             'status': item.status,
             'visibility_level': item.visibility_level,
             'create_time': str(item.create_time)

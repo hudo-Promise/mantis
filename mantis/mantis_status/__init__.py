@@ -20,22 +20,25 @@ column_no = {
     14: 'precondition',
     15: 'action',
     16: 'expectation',
-    28: 'reference spec',
+    17: 'creator',
+    29: 'reference spec',
 
-    17: 'test_sw',
-    18: 'test_result',
-    19: 'test_platform',
-    20: 'test_carline',
-    21: 'test_variant',
-    22: 'test_market',
-    23: 'test_language',
-    24: 'test_environment',
-    25: 'tb_type',
-    26: 'issue_descr',
-    27: 'comments',
-    29: 'extra_1',
-    30: 'extra_2',
-    31: 'extra_3',
+    18: 'test_sw',
+    19: 'test_result',
+    20: 'test_platform',
+    21: 'test_carline',
+    22: 'test_variant',
+    23: 'test_market',
+    24: 'test_language',
+    25: 'test_environment',
+    26: 'tb_type',
+    27: 'issue_descr',
+    28: 'comments',
+    30: 'tester',
+    31: 'cycle_id',
+    32: 'extra_1',
+    33: 'extra_2',
+    34: 'extra_3',
 }
 
 
@@ -57,18 +60,21 @@ column_rule = {
     14: 'not_null',
     15: 'not_null',
     16: 'not_null',
-    27: 'unlimited',
+    17: 'user_account',
+    28: 'unlimited',
 
-    17: 'check_sw',
-    18: 'check_result',
-    19: 'check_test',
+    18: 'check_sw',
+    19: 'check_result',
     20: 'check_test',
     21: 'check_test',
     22: 'check_test',
     23: 'check_test',
     24: 'check_test',
+    25: 'check_test',
 
-    26: 'check_issue_descr',
+    27: 'check_issue_descr',
+    30: 'user_account',
+    31: 'check_mid',
 }
 
 
@@ -85,10 +91,10 @@ matrix_rule = [
 ]
 
 
-case_col = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 28]
+case_col = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 29]
 
 
-case_result_col = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31]
+case_result_col = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34]
 
 unique_col = [
     'test_sw',
@@ -119,6 +125,7 @@ table_head = [
     'Precondition',
     'Action',
     'Expectation',
+    'Creator',
     'Test SW',
     'Test Result',
     'Test Platform',
@@ -131,6 +138,8 @@ table_head = [
     'Issue Descr',
     'Comments',
     'Reference Spec',
+    'Tester',
+    'Test Cycle ID',
     'Extra 1',
     'Extra 2',
     'Extra 3'
@@ -155,6 +164,7 @@ key_list = [
     'precondition',
     'action',
     'expectation',
+    'creator',
     'test_sw',
     'test_result',
     'test_platform',
@@ -167,6 +177,8 @@ key_list = [
     'issue_descr',
     'comments',
     'reference_spec',
+    'tester',
+    'cycle_id',
     'extra_1',
     'extra_2',
     'extra_3'

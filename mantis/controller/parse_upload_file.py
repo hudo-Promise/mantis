@@ -47,7 +47,7 @@ def verification_preprocessing(content):
     if rows == 0 and cols == 0:
         return False, {'error_type': 'Sheet', 'error_info': None}
     error_data_info = []
-    if cols != 32:
+    if cols != 35:
         for i in range(0, rows):
             for j in range(0, cols):
                 error_data_info.append([i, j, None])
@@ -72,6 +72,7 @@ def verification_preprocessing(content):
             'field_value2id': json.loads(op11_redis_client.get('field_value2id')),
             'exists_case': op11_redis_client.hkeys('exists_case'),
             'exists_result': op11_redis_client.hgetall('exists_result'),
+            'user_account2id': json.loads(op11_redis_client.get('user_account2id')),
             'rows': rows,
             'cols': cols
         }
@@ -95,6 +96,8 @@ def get_upload_case_info(mapping, error_data_info, insert_list, upgrade_list, no
                 flag, value = field_more(value, mapping.get('field_value2id').get(column_no.get(col)))
             elif column_rule.get(col) == 'not_null':
                 flag = not is_null(value)
+            elif column_rule.get(col) == 'user_account':
+                flag, value = user_account(value, mapping.get('user_account2id'))
             if not flag:
                 error_data_info.append([row, col, value])
                 continue
@@ -121,10 +124,19 @@ def get_upload_sw_info(mapping, error_data_info, insert_list, upgrade_list, upda
         if m_id == 'new':
             error_data_info.append([row, 0, 'new'])
             continue
+        tester = case_value_pre_deal(row_values, 30)
+        flag, value = user_account(tester, mapping.get('user_account2id'))
+        if not flag:
+            error_data_info.append([row, 30, tester])
+            continue
+        cycle_id = case_value_pre_deal(row_values, 31)
+        flag = check_mid(value)
+        if not flag:
+            error_data_info.append([row, 31, cycle_id])
+            continue
         matrix, result_unique_id, current_result_dict = generate_case_result_matrix(
             m_id, row_values, field_mapping=mapping.get('field_value2id'))
         if matrix not in matrix_rule:
-            print(matrix)
             for col in case_result_col[:10]:
                 error_data_info.append([row, col, case_value_pre_deal(row_values, col)])
             continue
@@ -227,6 +239,13 @@ def field_more(field_value, field_mapping):
             return False, None
         field_list.append(int(field_mapping.get(value)))
     return True, field_list
+
+
+def user_account(value, account2id):
+    if account2id.get(value):
+        return True, account2id[value]
+    else:
+        return False, None
 
 
 def is_null(value, mode=None):
