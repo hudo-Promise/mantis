@@ -277,6 +277,8 @@ case_result_key = [
     'tb_type',
     'issue_descr',
     'comments',
+    'tester',
+    'cycle_id'
     'extra_1',
     'extra_2',
     'extra_3'
