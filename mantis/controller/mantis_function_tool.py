@@ -215,7 +215,9 @@ def mantis_delete_field_value_tool(request_params):
     current_field = MantisCaseField.query.filter(MantisCaseField.case_field == field.lower()).first()
     field_mapping = current_field.case_field_mapping
     del field_mapping[str(field_id)]
-    MantisCaseField.query.filter(MantisCaseField.case_field == field.lower()).update(field_mapping)
+    MantisCaseField.query.filter(MantisCaseField.case_field == field.lower()).update(
+        {'case_field_mapping': field_mapping}
+    )
     mantis_clear_mapping_rule(field, field_id)
     mantis_db.session.commit()
     mantis_update_field_mapping_rule()

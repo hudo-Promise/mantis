@@ -26,6 +26,7 @@ def mantis_create_test_cycle_tool(request_params):
         request_params.get('tester'),
         request_params.get('free_test_item')
     )
+    test_scenario = request_params.get('test_scenario')
     mtc = MantisTestCycle(
         name=request_params.get('name'),
         test_group=request_params.get('test_group'),
@@ -37,7 +38,7 @@ def mantis_create_test_cycle_tool(request_params):
         due_date=get_dates_by_week(request_params.get('due_date')),
         description=request_params.get('description'),
         filter_id=request_params.get('filter_id'),
-        test_scenario=request_params.get('test_scenario'),
+        test_scenario=test_scenario,
         free_test_item=free_test_item,
         status=1,
         line=request_params.get('line'),
@@ -45,18 +46,22 @@ def mantis_create_test_cycle_tool(request_params):
         update_time=current_time,
     )
     mantis_db.session.add(mtc)
+    mantis_db.session.flush()
+    cycle_id = mtc.id
     mantis_db.session.commit()
 
 
 def mantis_edit_test_cycle_tool(request_params):
-    mtc = MantisTestCycle.query.filter(MantisTestCycle.id == request_params.get('id')).first()
+    cycle_id = request_params.get('id')
+    test_scenario = request_params.get('test_scenario')
+    mtc = MantisTestCycle.query.filter(MantisTestCycle.id == cycle_id).first()
     update_dict = {'update_time': create_current_format_time()}
     update_key = [
         'name', 'test_group', 'linked_milestone', 'market', 'start_date', 'due_date', 'description', 'filter_id',
         'test_scenario', 'free_test_item', 'status', 'line'
     ]
     free_test_item = generate_free_test_item(
-        request_params.get('test_scenario'),
+        test_scenario,
         request_params.get('tester'),
         request_params.get('free_test_item')
     )
@@ -70,7 +75,7 @@ def mantis_edit_test_cycle_tool(request_params):
     milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
     update_dict['cluster'] = milestone.cluster
     update_dict['project'] = milestone.project
-    MantisTestCycle.query.filter(MantisTestCycle.id == request_params.get('id')).update(update_dict)
+    MantisTestCycle.query.filter(MantisTestCycle.id == cycle_id).update(update_dict)
     mantis_db.session.commit()
 
 
@@ -136,6 +141,10 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
 def generate_test_cycle_tool(current_time, mtc):
     start_year, due_year, start_week, due_week = deal_week_time(mtc)
     tester = [free_item.get('tester') for free_item in mtc.free_test_item]
+    if mtc.test_scenario == 1:
+        progress = calculate_test_cycle_pregress_for_test_case(mtc.id)
+    else:
+        progress = calculate_test_cycle_pregress_for_free_item(mtc.free_test_item)
     ret = {
         'id': mtc.id,
         'name': mtc.name,
@@ -156,14 +165,10 @@ def generate_test_cycle_tool(current_time, mtc):
         'free_test_item': mtc.free_test_item,
         'status': mtc.status,
         'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
-        # 'time_to_finish': calculate_time_to_finish(
-        #     get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
-        #     mtc.progress
-        # ) if mtc.progress != 0 else 0,
         'time_to_finish': calculate_time_to_finish(
             get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
-            0.9
-        ),
+            progress
+        ) if progress != 0 else 0,  # TODO
         'line': mtc.line,
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
@@ -374,3 +379,26 @@ def generate_case_for_cycle(case):
         'issue_descr': case.issue_descr,
         'tester': case.tester
     }
+
+
+def calculate_test_cycle_pregress_for_test_case(cycle_id):
+    """
+    更新case、result / 创建 编辑 test cycle / filter 变更
+    """
+    cycle = get_test_cycle_for_graph({'id': cycle_id})
+    filter_list = parse_case_filter_config(cycle.filter_config)
+    if not filter_list:
+        return None
+    finish_num = mantis_db.session.query(CaseResult.m_id).filter(
+        CaseResult.cycle_id == cycle_id
+    ).count()
+    total = mantis_db.session.query(TestCase.id).filter(*filter_list).count()
+    return round(finish_num / total, 2)
+
+
+def calculate_test_cycle_pregress_for_free_item(free_items):
+    finish_num = 0
+    for item in free_items:
+        if item.get('status') > 2:
+            finish_num += 1
+    return round(finish_num / len(free_items), 2)

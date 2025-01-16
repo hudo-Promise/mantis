@@ -401,8 +401,9 @@ def activate_fuli(curr):
     for fu_li in fu_li_results:
         fuli_value2id[fu_li.get('fuLi_id')] = fu_li.get('fuLi_value')
         fuli_id2value[fu_li.get('fuLi_value')] = fu_li.get('fuLi_id')
+        if not fuli_groups.get(fu_li.get('fuLi_group_id')):
+            continue
         fuli_groups[fu_li.get('fuLi_group_id')]['fuLi'][fu_li.get('fuLi_value')] = fu_li
-
     return fuli_value2id, fuli_id2value, fuli_groups
 
 

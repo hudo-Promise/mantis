@@ -124,16 +124,6 @@ def get_upload_sw_info(mapping, error_data_info, insert_list, upgrade_list, upda
         if m_id == 'new':
             error_data_info.append([row, 0, 'new'])
             continue
-        tester = case_value_pre_deal(row_values, 30)
-        flag, value = user_account(tester, mapping.get('user_account2id'))
-        if not flag:
-            error_data_info.append([row, 30, tester])
-            continue
-        cycle_id = case_value_pre_deal(row_values, 31)
-        flag = check_mid(value)
-        if not flag:
-            error_data_info.append([row, 31, cycle_id])
-            continue
         matrix, result_unique_id, current_result_dict = generate_case_result_matrix(
             m_id, row_values, field_mapping=mapping.get('field_value2id'))
         if matrix not in matrix_rule:
@@ -141,6 +131,18 @@ def get_upload_sw_info(mapping, error_data_info, insert_list, upgrade_list, upda
                 error_data_info.append([row, col, case_value_pre_deal(row_values, col)])
             continue
         if matrix.startswith('null'):
+            continue
+        tester = case_value_pre_deal(row_values, 30)
+        flag, value = user_account(tester, mapping.get('user_account2id'))
+        current_result_dict['tester'] = tester
+        if not flag:
+            error_data_info.append([row, 30, tester])
+            continue
+        cycle_id = case_value_pre_deal(row_values, 31)
+        flag = check_mid(cycle_id)
+        current_result_dict['cycle_id'] = cycle_id
+        if not flag:
+            error_data_info.append([row, 31, cycle_id])
             continue
         if result_unique_id in mapping.get('exists_result').keys():
             current_result_dict['upgrade_time'] = current_time
