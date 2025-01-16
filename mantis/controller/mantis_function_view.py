@@ -65,8 +65,8 @@ def mantis_edit_field_value():
 @swag_from('../mantis_swag_yaml/mantis_delete_field_value.yml')
 @function_blueprint.route('/mantis/delete/field/value', methods=['POST'])
 def mantis_delete_field_value():
-    mantis_delete_field_value_tool(request.json)
-    resp = response(200)
+    code = mantis_delete_field_value_tool(request.json)
+    resp = response(code)
     return jsonify(resp)
 
 

@@ -4,7 +4,7 @@ import json
 from common_tools.tools import op11_redis_client
 from mantis.mantis_caches import mantis_update_field_mapping_rule
 from mantis.models import mantis_db
-from mantis.models.case import TestCase
+from mantis.models.case import TestCase, CaseResult
 from mantis.models.functions import SubFunction, Group, Functions, MantisCaseField, MantisFuLiGroup, MantisFuLi
 from mantis.models.mantis_config import MantisMappingRule
 
@@ -212,6 +212,9 @@ def mantis_edit_field_value_tool(request_params):
 def mantis_delete_field_value_tool(request_params):
     field = request_params.get('field')
     field_id = request_params.get('field_id')
+    if mantis_check_field_used_tool(field, field_id):
+        return 10018
+
     current_field = MantisCaseField.query.filter(MantisCaseField.case_field == field.lower()).first()
     field_mapping = current_field.case_field_mapping
     del field_mapping[str(field_id)]
@@ -221,6 +224,7 @@ def mantis_delete_field_value_tool(request_params):
     mantis_clear_mapping_rule(field, field_id)
     mantis_db.session.commit()
     mantis_update_field_mapping_rule()
+    return 200
 
 
 def mantis_clear_mapping_rule(field, field_id):
@@ -307,3 +311,26 @@ def mantis_check_function_used_tool(field, value):
         if count_1 == 0:
             flag = False
     return flag
+
+
+def mantis_check_field_used_tool(field, field_id):
+    field_dict = {
+        'category': TestCase,
+        'level': TestCase,
+        'available_platform': TestCase,
+        'available_carline': TestCase,
+        'available_variant': TestCase,
+        'available_market': TestCase,
+        'available_language': TestCase,
+        'available_environment': TestCase,
+        'test_result': CaseResult,
+        'tb_type': CaseResult,
+        'test_platform': CaseResult,
+        'test_carline': CaseResult,
+        'test_variant': CaseResult,
+        'test_market': CaseResult,
+        'test_language': CaseResult,
+        'test_environment': CaseResult,
+    }
+    count = field_dict.get(field).query.filter(getattr(field_dict.get(field), field) == field_id).count()
+    return True if count > 0 else False
