@@ -134,7 +134,7 @@ def get_upload_sw_info(mapping, error_data_info, insert_list, upgrade_list, upda
             continue
         tester = case_value_pre_deal(row_values, 30)
         flag, value = user_account(tester, mapping.get('user_account2id'))
-        current_result_dict['tester'] = tester
+        current_result_dict['tester'] = value
         if not flag:
             error_data_info.append([row, 30, tester])
             continue
