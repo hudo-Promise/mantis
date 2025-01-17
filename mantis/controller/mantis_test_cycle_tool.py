@@ -141,10 +141,10 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
 def generate_test_cycle_tool(current_time, mtc):
     start_year, due_year, start_week, due_week = deal_week_time(mtc)
     tester = [free_item.get('tester') for free_item in mtc.free_test_item]
-    if mtc.test_scenario == 1:
-        progress = calculate_test_cycle_pregress_for_test_case(mtc.id)
-    else:
-        progress = calculate_test_cycle_pregress_for_free_item(mtc.free_test_item)
+    # if mtc.test_scenario == 1:
+    #     progress = calculate_test_cycle_pregress_for_test_case(mtc.id)
+    # else:
+    #     progress = calculate_test_cycle_pregress_for_free_item(mtc.free_test_item)
     ret = {
         'id': mtc.id,
         'name': mtc.name,
@@ -165,10 +165,14 @@ def generate_test_cycle_tool(current_time, mtc):
         'free_test_item': mtc.free_test_item,
         'status': mtc.status,
         'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
+        # 'time_to_finish': calculate_time_to_finish(
+        #     get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
+        #     progress
+        # ) if progress != 0 else 0,  # TODO
         'time_to_finish': calculate_time_to_finish(
             get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
-            progress
-        ) if progress != 0 else 0,  # TODO
+            0.9
+        ),
         'line': mtc.line,
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
