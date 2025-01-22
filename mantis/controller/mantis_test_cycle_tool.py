@@ -11,7 +11,7 @@ from common_tools.tools import (
 )
 from config.basic_setting import FORMAT_DATE
 from mantis.controller.mantis_test_milestone_tool import get_test_milestone_by_id, parse_case_filter_config, \
-    get_case_current_result, get_test_cycle_for_graph, deal_week_time, calculate_label, generate_axis_data
+    get_case_current_result, get_test_cycle_for_graph, deal_week_time, generate_axis_data, calculate_label
 from mantis.mantis_status import mtc_groups
 from mantis.models import mantis_db
 from mantis.models.case import TestCase, CaseResult
@@ -140,11 +140,8 @@ def mantis_get_test_cycle_by_milestone_tool(request_params):
 
 def generate_test_cycle_tool(current_time, mtc):
     start_year, due_year, start_week, due_week = deal_week_time(mtc)
-    tester = [free_item.get('tester') for free_item in mtc.free_test_item]
-    # if mtc.test_scenario == 1:
-    #     progress = calculate_test_cycle_pregress_for_test_case(mtc.id)
-    # else:
-    #     progress = calculate_test_cycle_pregress_for_free_item(mtc.free_test_item)
+    tester = list(set([free_item.get('tester') for free_item in mtc.free_test_item]))
+
     ret = {
         'id': mtc.id,
         'name': mtc.name,
@@ -164,20 +161,11 @@ def generate_test_cycle_tool(current_time, mtc):
         'tester': tester,
         'free_test_item': mtc.free_test_item,
         'status': mtc.status,
-        'time_left': get_gap_days(current_time, f'{mtc.due_date} 00:00:00') + 1,
-        # 'time_to_finish': calculate_time_to_finish(
-        #     get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
-        #     progress
-        # ) if progress != 0 else 0,  # TODO
-        'time_to_finish': calculate_time_to_finish(
-            get_gap_days(f'{mtc.start_date} 00:00:00', current_time) + 1,
-            0.9
-        ),
+        'label': calculate_label(mtc, current_time),
         'line': mtc.line,
         'create_time': str(mtc.create_time),
         'update_time': str(mtc.update_time),
     }
-    ret['label'] = calculate_label(ret.get('time_left'), ret.get('time_to_finish'))
     return ret
 
 
@@ -385,24 +373,4 @@ def generate_case_for_cycle(case):
     }
 
 
-def calculate_test_cycle_pregress_for_test_case(cycle_id):
-    """
-    更新case、result / 创建 编辑 test cycle / filter 变更
-    """
-    cycle = get_test_cycle_for_graph({'id': cycle_id})
-    filter_list = parse_case_filter_config(cycle.filter_config)
-    if not filter_list:
-        return None
-    finish_num = mantis_db.session.query(CaseResult.m_id).filter(
-        CaseResult.cycle_id == cycle_id
-    ).count()
-    total = mantis_db.session.query(TestCase.id).filter(*filter_list).count()
-    return round(finish_num / total, 2)
 
-
-def calculate_test_cycle_pregress_for_free_item(free_items):
-    finish_num = 0
-    for item in free_items:
-        if item.get('status') > 2:
-            finish_num += 1
-    return round(finish_num / len(free_items), 2)

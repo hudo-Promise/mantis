@@ -62,7 +62,7 @@ def mantis_get_test_milestone_time_table_tool():
 
 def generate_test_milestone_tool(current_time, mtm):
     start_year, due_year, start_week, due_week = deal_week_time(mtm)
-    mtm = {
+    mtm_dict = {
         'id': mtm.id,
         'name': mtm.name,
         'description': mtm.description,
@@ -73,17 +73,12 @@ def generate_test_milestone_tool(current_time, mtm):
         'start_week': f'{start_year}-{generate_week_str(mtm.start_date)}',
         'due_date': mtm.due_date,
         'due_week': f'{due_year}-{generate_week_str(mtm.due_date)}',
-        'time_left': get_gap_days(current_time, f'{mtm.due_date} 00:00:00') + 1,
-        'time_to_finish': calculate_time_to_finish(
-            get_gap_days(f'{mtm.start_date} 00:00:00', current_time) + 1,
-            0.9
-        ),  # TODO
+        'label': calculate_label(mtm, current_time),
         'actual_finish_date': mtm.actual_finish_date,
         'create_time': str(mtm.create_time),
         'update_time': str(mtm.update_time),
     }
-    mtm['label'] = calculate_label(mtm.get('time_left'), mtm.get('time_to_finish'))
-    return mtm
+    return mtm_dict
 
 
 def deal_week_time(mtc):
@@ -345,10 +340,73 @@ def mantis_test_milestone_group_order_tool(params_dict):
     return ret
 
 
-def calculate_label(time_left, time_to_finish):
-    if time_left > time_to_finish:
-        return 1
-    elif time_left < time_to_finish:
-        return 3
+def calculate_label(current_model, current_time):
+    progress = 0
+    if isinstance(current_model, MantisTestMileStone):
+        cycles = mantis_db.session.query(MantisTestCycle).filter(
+            MantisTestCycle.linked_milestone == current_model.id).all()
+        if len(cycles) == 0:
+            progress = 0
+        else:
+            for cycle in cycles:
+                progress += calculate_progress(cycle, cycle.test_scenario)
+            progress /= len(cycles)
+    elif isinstance(current_model, MantisTestCycle):
+        progress = calculate_progress(current_model, current_model.test_scenario)
+    time_left = get_gap_days(current_time, f'{current_model.due_date} 00:00:00') + 1
+
+    if progress == 0:
+        all_day = get_gap_days(
+            f'{current_model.start_date} 00:00:00', f'{current_model.due_date} 00:00:00'
+        ) + 1
+        pregress_of_day = (all_day - time_left) / all_day
+        if pregress_of_day < 0.1:
+            return 1
+        elif 0.1 <= pregress_of_day < 0.6:
+            return 2
+        else:
+            return 3
     else:
-        return 2
+        time_to_finish = calculate_time_to_finish(
+            get_gap_days(f'{current_model.start_date} 00:00:00', current_time) + 1,
+            progress
+        )
+        if time_left > time_to_finish:
+            return 1
+        elif time_left == time_to_finish:
+            return 2
+        else:
+            return 3
+
+
+def calculate_progress(cycle, test_scenario):
+    if test_scenario == 1:
+        progress = calculate_test_cycle_pregress_for_test_case(cycle)
+    else:
+        progress = calculate_test_cycle_pregress_for_free_item(cycle.free_test_item)
+    return progress
+
+
+def calculate_test_cycle_pregress_for_test_case(cycle):
+    """
+    更新case、result / 创建 编辑 test cycle / filter 变更
+    """
+    current_cycle = get_test_cycle_for_graph({'id': cycle.id})
+    filter_list = parse_case_filter_config(current_cycle.filter_config)
+    if not filter_list:
+        return 0
+    finish_num = mantis_db.session.query(CaseResult.m_id).filter(
+        CaseResult.cycle_id == cycle.id
+    ).count()
+    total = mantis_db.session.query(TestCase.id).filter(*filter_list).count()
+    return round(finish_num / total, 2)
+
+
+def calculate_test_cycle_pregress_for_free_item(free_items):
+    finish_num = 0
+    for item in free_items:
+        if item.get('status') is None:
+            continue
+        if item.get('status') > 2:
+            finish_num += 1
+    return round(finish_num / len(free_items), 2)
