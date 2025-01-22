@@ -300,7 +300,7 @@ def get_free_test_status(cycle, query_type=None):
             ret[key][free_test_item.get('status')] += 1
         else:
             if free_test_item.get('status') not in ret.keys():
-                ret[free_test_item.get('status')] = 1
+                ret[free_test_item.get('status')] = 0
             ret[free_test_item.get('status')] += 1
     return ret
 
