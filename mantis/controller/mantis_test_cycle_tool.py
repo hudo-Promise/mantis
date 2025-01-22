@@ -52,10 +52,11 @@ def mantis_create_test_cycle_tool(request_params):
 
 
 def mantis_edit_test_cycle_tool(request_params):
+    current_time = create_current_format_time()
     cycle_id = request_params.get('id')
     test_scenario = request_params.get('test_scenario')
     mtc = MantisTestCycle.query.filter(MantisTestCycle.id == cycle_id).first()
-    update_dict = {'update_time': create_current_format_time()}
+    update_dict = {'update_time': current_time}
     update_key = [
         'name', 'test_group', 'linked_milestone', 'market', 'start_date', 'due_date', 'description', 'filter_id',
         'test_scenario', 'free_test_item', 'status', 'line'
@@ -75,6 +76,8 @@ def mantis_edit_test_cycle_tool(request_params):
     milestone = get_test_milestone_by_id(request_params.get('linked_milestone'))
     update_dict['cluster'] = milestone.cluster
     update_dict['project'] = milestone.project
+    if request_params.get('status', 1) == 4:
+        update_dict['actual_finish_date'] = current_time[:10]
     MantisTestCycle.query.filter(MantisTestCycle.id == cycle_id).update(update_dict)
     mantis_db.session.commit()
 
