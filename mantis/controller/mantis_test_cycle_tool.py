@@ -114,7 +114,7 @@ def mantis_get_test_cycle_tool(request_params):
     group_by_key = request_params.get('group_by', 'linked_milestone')
     for mtc in mtc_list:
         cur_mtc = generate_test_cycle_tool(current_time, mtc)
-        ret_key = cur_mtc.get(group_by_key) if cur_mtc.get(group_by_key) else 0
+        ret_key = cur_mtc.get(group_by_key, 0)
         if ret_key not in ret.keys():
             ret[ret_key] = []
         ret[ret_key].append(cur_mtc)
@@ -377,4 +377,41 @@ def generate_case_for_cycle(case):
     }
 
 
+def mantis_create_cycle_draft_cache(params_dict):
+    if params_dict.get('user_id') is None:
+        return None
+    user_id = str(params_dict.get('user_id'))
+    if not op11_redis_client.exists('test_cycle_draft'):
+        op11_redis_client.hmset('test_cycle_draft', {params_dict.get('user_id'): json.dumps([params_dict])})
+        return 200
+    if op11_redis_client.hexists('test_cycle_draft', user_id):
+        drafts = op11_redis_client.hget('test_cycle_draft', user_id)
+        drafts = json.loads(drafts).append(params_dict)
+    else:
+        drafts = [params_dict]
+    op11_redis_client.hmset('test_cycle_draft', {params_dict.get('user_id'): json.dumps(drafts)})
+    return 200
 
+
+def mantis_get_cycle_draft_cache(params_dict):
+    if not op11_redis_client.exists('test_cycle_draft'):
+        return None
+    user_id = str(params_dict.get('user_id'))
+    if not op11_redis_client.hexists('test_cycle_draft', user_id):
+        return None
+    drafts = op11_redis_client.hget('test_cycle_draft', user_id)
+    return json.loads(drafts)
+
+
+def mantis_delete_cycle_draft_cache(params_dict):
+    if not op11_redis_client.exists('test_cycle_draft'):
+        return
+    user_id = str(params_dict.get('user_id'))
+    if not op11_redis_client.hexists('test_cycle_draft', user_id):
+        return
+    drafts = json.loads(op11_redis_client.hget('test_cycle_draft', str(params_dict.get('user_id'))))
+    index = params_dict.get('index')
+    if index >= len(drafts):
+        return
+    del drafts[index]
+    op11_redis_client.hmset('test_cycle_draft', {params_dict.get('user_id'): json.dumps(drafts)})

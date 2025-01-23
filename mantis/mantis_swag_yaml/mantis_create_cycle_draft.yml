@@ -1,0 +1,54 @@
+tags:
+  - MANTIS Cycle Draft 相关接口
+summary:
+  - 添加 Cycle Draft
+description:
+    添加 Cycle Draft
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 添加 Cycle Draft
+      properties:
+        user_id:
+          type: integer
+        name:
+          type: string
+        test_group:
+          type: integer
+        linked_milestone:
+          type: integer
+        market:
+          type: array
+          example: []
+        start_date:
+          type: string
+          example: xxxx-xx
+        due_date:
+          type: string
+          example: xxxx-xx
+        description:
+          type: string
+        filter_id:
+          type: integer
+        test_scenario:
+          type: integer
+        tester:
+          type: array
+          example: []
+        free_test_item:
+          type: array
+          example: [{tester: 1, desc: string, status: integer}]
+        line:
+          type: integer
+
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:

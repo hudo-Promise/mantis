@@ -1,0 +1,26 @@
+tags:
+  - MANTIS Cycle Draft 相关接口
+summary:
+  - 删除 Cycle Draft
+description:
+    删除 Cycle Draft
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: 删除 Cycle Draft
+      properties:
+        user_id:
+          type: integer
+        index:
+          type: integer
+
+
+responses:
+  200:
+     description: 执行成功
+     example:
+  500:
+     description: 执行失败
+     example:
