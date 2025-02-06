@@ -114,10 +114,11 @@ def mantis_get_test_cycle_tool(request_params):
     group_by_key = request_params.get('group_by', 'linked_milestone')
     for mtc in mtc_list:
         cur_mtc = generate_test_cycle_tool(current_time, mtc)
-        ret_key = cur_mtc.get(group_by_key, 0)
+        ret_key = cur_mtc.get(group_by_key) if cur_mtc.get(group_by_key) else 0
         if ret_key not in ret.keys():
             ret[ret_key] = []
         ret[ret_key].append(cur_mtc)
+    print(ret)
     return ret
 
 
