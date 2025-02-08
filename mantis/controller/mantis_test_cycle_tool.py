@@ -6,7 +6,7 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.sql import func
 
 from common_tools.tools import (
-    create_current_format_time, update_tool, get_gap_days, calculate_time_to_finish, generate_week_str,
+    create_current_format_time, update_tool, generate_week_str,
     get_dates_by_week, generate_dates, op11_redis_client
 )
 from config.basic_setting import FORMAT_DATE
@@ -46,8 +46,6 @@ def mantis_create_test_cycle_tool(request_params):
         update_time=current_time,
     )
     mantis_db.session.add(mtc)
-    mantis_db.session.flush()
-    cycle_id = mtc.id
     mantis_db.session.commit()
 
 
