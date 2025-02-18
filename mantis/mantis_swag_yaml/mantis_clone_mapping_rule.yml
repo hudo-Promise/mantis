@@ -18,6 +18,8 @@ parameters:
           example: 1
         mapping_name:
           type: string
+        project:
+          type: integer
 
 
 responses:

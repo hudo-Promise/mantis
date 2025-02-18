@@ -5,13 +5,14 @@ import os
 
 from config.basic_setting import LOG_PATH, SERVICE_MODE
 from logging.handlers import TimedRotatingFileHandler
-
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("httpcore.connection").setLevel(logging.WARNING)
 
 class InitLog(object):
     def __init__(self):
         self.log_path = LOG_PATH
         self.formatter = logging.Formatter(
-            '[%(asctime)s] -- [%(levelname)s] -- [%(filename)s:%(lineno)d] -- %(message)s'
+            '[%(asctime)s] -- [%(name)s] -- [%(levelname)s] -- [%(filename)s:%(lineno)d] -- %(message)s'
         )
         self.log_level = {
             'product': logging.DEBUG,
@@ -47,6 +48,11 @@ class InitLog(object):
         custom_logger.setLevel(self.log_level.get(SERVICE_MODE))
         for handler in handlers:
             custom_logger.addHandler(handler)
+        console_handler = logging.StreamHandler()
+        console_handler.name = "console"
+        console_handler.setLevel(logging.DEBUG)
+        console_handler.setFormatter(self.formatter)
+        custom_logger.addHandler(console_handler)
         return custom_logger
 
     def create_log(self):

@@ -10,6 +10,7 @@ def mantis_create_mapping_rule_tool(request_params):
     sub_func_id2func_id = json.loads(op11_redis_client.get('field_id2value')).get('sub_func_id2func_id')
     mcm = MantisMappingRule(
         cluster_id=request_params.get('cluster'),
+        project=request_params.get('project'),
         mapping_name=request_params.get('mapping_name'),
         mapping_rule=generate_mantis_mapping_rule(request_params, sub_func_id2func_id),
         create_time=current_time,
@@ -50,6 +51,7 @@ def mantis_edit_mapping_rule_tool(request_params):
     sub_func_id2func_id = json.loads(op11_redis_client.get('field_id2value')).get('sub_func_id2func_id')
     MantisMappingRule.query.filter(MantisMappingRule.id == request_params.get('id')).update({
         'mapping_name': request_params.get('mapping_name'),
+        'project': request_params.get('project'),
         'cluster_id': request_params.get('cluster'),
         'mapping_rule': generate_mantis_mapping_rule(request_params, sub_func_id2func_id),
         'update_time': create_current_format_time()
@@ -65,7 +67,13 @@ def mantis_delete_mapping_rule_tool(request_params):
 def mantis_get_mapping_rule_tool(request_params):
     page_size = request_params.get('page_size')
     page_num = request_params.get('page_num')
-    mcm = MantisMappingRule.query.filter().order_by(
+    project = request_params.get('project')
+    filter_list = []
+    if project:
+        filter_list.append(MantisMappingRule.project == project)
+    mcm = MantisMappingRule.query.filter(
+        *filter_list
+    ).order_by(
         MantisMappingRule.create_time.desc()
     ).offset((int(page_num) - 1) * page_size).limit(int(page_size)).all()
     mapping_rule_list = list(map(generate_mapping_rule, mcm))
@@ -77,6 +85,7 @@ def generate_mapping_rule(mapping_rule):
         'id': mapping_rule.id,
         'mapping_name': mapping_rule.mapping_name,
         'mapping_rule': mapping_rule.mapping_rule,
+        'project': mapping_rule.project,
         'cluster': mapping_rule.cluster_id,
         'function': len(mapping_rule.mapping_rule.get('function')) if
         mapping_rule.mapping_rule.get('function') else 0,
@@ -94,6 +103,7 @@ def mantis_clone_mapping_rule_tool(request_params):
     mapping_rule['cluster'] = [request_params.get('cluster')]
     mcm = MantisMappingRule(
         mapping_name=request_params.get('mapping_name'),
+        project=request_params.get('project'),
         cluster_id=request_params.get('cluster'),
         mapping_rule=mapping_rule,
         create_time=current_time,

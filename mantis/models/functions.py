@@ -30,7 +30,7 @@ class MantisFuLiGroup(mantis_db.Model):
 
 
 class MantisFuLi(mantis_db.Model):
-    __tablename__ = 'mantis_fuLi_id'
+    __tablename__ = 'mantis_fuLi'
     id = mantis_db.Column(mantis_db.Integer, primary_key=True, autoincrement=True, comment='主键')
     fuLi_id = mantis_db.Column(mantis_db.String(16), nullable=True, comment='fuLi ID')
     fuLi_desc = mantis_db.Column(mantis_db.String(512), nullable=True, comment='fuLi 描述')

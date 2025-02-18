@@ -1,16 +1,18 @@
 tags:
-  - MANTIS Test Cycle 相关接口
+  - MANTIS Cycle Draft 相关接口
 summary:
-  - 添加 Test Cycle
+  - 添加 Cycle Draft
 description:
-    添加 Test Cycle
+    添加 Cycle Draft
 parameters:
   - name: body
     in: body
     required: true
     schema:
-      id: 添加 Test Cycle
+      id: 添加 Cycle Draft
       properties:
+        user_id:
+          type: integer
         name:
           type: string
         test_group:

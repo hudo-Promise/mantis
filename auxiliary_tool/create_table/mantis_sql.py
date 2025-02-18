@@ -206,24 +206,27 @@ create_mantis_case_result_sql = """
     create table if not exists `case_result`
 (
     id               int auto_increment comment '主键' primary key,
-    m_id             int          null comment 'case id',
-    test_sw          varchar(32)  null comment '软件版本 -- 有测试结果不可为空',
-    sw_num           int          null,
-    test_result      int          null comment '结果 pass fail tb empty n/a null',
-    test_platform    int          null comment '平台 -- PPC/PPE/All',
-    test_carline     int          null comment '车系  -- 有测试结果不可为空',
-    test_variant     int          null comment '车辆规格 -- 有测试结果不可为空',
-    test_market      int          null comment '市场  -- 有测试结果不可为空',
-    test_language    int          null comment '语言 -- TCN/SCN/TW/EN/JP/KR',
-    test_environment int          null comment '环境 -- car/all',
-    tb_type          int          null comment '用例停滞原因',
-    issue_descr      varchar(512) null,
-    comments         text         null comment '备注',
-    extra_1          varchar(16)  null comment '补充数据1',
-    extra_2          varchar(16)  null comment '补充数据2',
-    extra_3          varchar(16)  null comment '补充数据3',
-    create_time      datetime     not null comment '创建时间',
-    upgrade_time     datetime     null comment '更新时间'
+    m_id             int           null comment 'case id',
+    test_sw          varchar(32)   null comment '软件版本 -- 有测试结果不可为空',
+    sw_num           int           null,
+    test_result      int           null comment '结果 pass fail tb empty n/a null',
+    test_platform    int           null comment '平台 -- PPC/PPE/All',
+    test_carline     int           null comment '车系  -- 有测试结果不可为空',
+    test_variant     int           null comment '车辆规格 -- 有测试结果不可为空',
+    test_market      int           null comment '市场  -- 有测试结果不可为空',
+    test_language    int           null comment '语言 -- TCN/SCN/TW/EN/JP/KR',
+    test_environment int           null comment '环境 -- car/all',
+    tb_type          int           null comment '用例停滞原因',
+    issue_descr      varchar(512)  null,
+    comments         text          null comment '备注',
+    extra_1          varchar(16)   null comment '补充数据1',
+    extra_2          varchar(16)   null comment '补充数据2',
+    extra_3          varchar(16)   null comment '补充数据3',
+    create_time      datetime      not null comment '创建时间',
+    upgrade_time     datetime      null comment '更新时间',
+    tester           int           null comment '测试人员',
+    aug_task_id      int default 0 not null comment 'AutoGo唯一ID',
+    cycle_id         int default 0 not null comment '所属test cycle'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4;
 """
 
@@ -312,16 +315,17 @@ create_mantis_filter_record_sql = """
 create_mantis_test_milestone_sql = """
     create table if not exists `mantis_test_milestone`
 (
-    `id`                int auto_increment comment '主键' primary key,
-    `name`              varchar(64) null comment 'test milestone name',
-    `description`       text null comment '描述',
-    `project`           int null comment '项目',
-    `cluster`           int null comment '集群',
-    `status`            int null comment '状态',
-    `start_date`        varchar(16) null comment '开始日期',
-    `due_date`          varchar(16) null comment '截至日期',
-    `create_time`       datetime null comment '创建时间',
-    `update_time`       datetime null comment '更新时间'
+    `id`                    int auto_increment comment '主键' primary key,
+    `name`                  varchar(64) null comment 'test milestone name',
+    `description`           text null comment '描述',
+    `project`               int null comment '项目',
+    `cluster`               int null comment '集群',
+    `status`                int null comment '状态',
+    `start_date`            varchar(16) null comment '开始日期',
+    `due_date`              varchar(16) null comment '截至日期',
+    `actual_finish_date`    varchar(16) null comment '实际完成日期',
+    `create_time`           datetime null comment '创建时间',
+    `update_time`           datetime null comment '更新时间'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4;
 """
 
@@ -344,6 +348,8 @@ create_mantis_test_cycle_sql = """
     `test_scenario`         int null comment '类型 1 test case 2 free test',
     `free_test_item`        json null comment '测试人员记录',
     `status`                int null comment '状态',
+    `progress`              int not null default 0 comment '进度',               
+    `line`                  int not null default 0 comment '位置',               
     `create_time`           datetime null comment '创建时间',
     `update_time`           datetime null comment '更新时间'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4;

@@ -35,6 +35,8 @@ status_code_massage = {
     10014: 'Invalid number of columns or invalid cell values',
     10015: 'The data is being calculated',
     10016: 'Invalid result',
+    10017: 'The current field value already exists',
+    10018: 'The current field value has been applied',
 }
 """
     200: '执行成功',

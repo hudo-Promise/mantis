@@ -4,6 +4,7 @@ import json
 from common_tools.tools import op11_redis_client
 from mantis.mantis_caches import mantis_update_field_mapping_rule
 from mantis.models import mantis_db
+from mantis.models.case import TestCase, CaseResult
 from mantis.models.functions import SubFunction, Group, Functions, MantisCaseField, MantisFuLiGroup, MantisFuLi
 from mantis.models.mantis_config import MantisMappingRule
 
@@ -26,9 +27,8 @@ def query_functions():
         }
     sub_functions = mantis_db.session.query(SubFunction).all()
     for sub_function in sub_functions:
-        func_dict[
-            str(sub_function.test_group)
-        ]['function'][str(sub_function.function)]['sub_function'][str(sub_function.id)] = {
+        func_dict[str(sub_function.test_group)]['function'][
+            str(sub_function.function)]['sub_function'][str(sub_function.id)] = {
             'sub_function_id': sub_function.id,
             'sub_function_name': sub_function.sub_function,
         }
@@ -37,6 +37,21 @@ def query_functions():
 
 def mantis_create_functions_tool(request_params):
     field = request_params.get('field')
+    model_dict = {
+        'group': Group,
+        'function': Functions,
+        'sub_function': SubFunction,
+        'fuLi_group': MantisFuLiGroup,
+        'fuLi': MantisFuLi,
+    }
+    check_field, param_field = generate_check_field(field)
+    if mantis_check_function_exists_tool(
+        model_dict,
+        field,
+        check_field,
+        request_params.get(param_field)
+    ):
+        return False, 10017
     field_dict = {
         'group': Group(
             group_name=request_params.get('group_name')
@@ -60,13 +75,14 @@ def mantis_create_functions_tool(request_params):
             delete_flag=1
         )
     }
+
     mantis_model = field_dict.get(field)
     mantis_db.session.add(mantis_model)
     mantis_db.session.flush()
     new_id = mantis_model.id
     mantis_db.session.commit()
     mantis_update_field_mapping_rule()
-    return new_id
+    return True, new_id
 
 
 def mantis_edit_functions_tool(request_params):
@@ -78,6 +94,14 @@ def mantis_edit_functions_tool(request_params):
         'fuLi_group': MantisFuLiGroup,
         'fuLi': MantisFuLi,
     }
+    check_field, param_field = generate_check_field(field)
+    if mantis_check_function_exists_tool(
+        model_dict,
+        field,
+        check_field,
+        request_params.get(param_field)
+    ):
+        return 10017
     update_model = {
         'group': {
             'group_name': request_params.get('group_name')
@@ -105,9 +129,12 @@ def mantis_edit_functions_tool(request_params):
     ).update(update_model.get(field))
     mantis_db.session.commit()
     mantis_update_field_mapping_rule()
+    return 200
 
 
 def mantis_delete_functions_tool(request_params):
+    if mantis_check_function_used_tool(request_params.get('field'), request_params.get('id')):
+        return 10018
 
     def _cascade_clear_sub_functions(_field):
         mode_dict = {
@@ -148,9 +175,10 @@ def mantis_delete_functions_tool(request_params):
         _cascade_clear_fuli()
     elif field == 'fuLi':
         MantisFuLi.query.filter(MantisFuLi.id == request_params.get('id')).update({'delete_flag': 2})
-        mantis_clear_mapping_rule(field, request_params.get('id'))
+        mantis_clear_mapping_rule(f'{field}_value', request_params.get('id'))
     mantis_db.session.commit()
     mantis_update_field_mapping_rule()
+    return 200
 
 
 def mantis_create_field_value_tool(request_params):
@@ -184,13 +212,19 @@ def mantis_edit_field_value_tool(request_params):
 def mantis_delete_field_value_tool(request_params):
     field = request_params.get('field')
     field_id = request_params.get('field_id')
+    if mantis_check_field_used_tool(field, field_id):
+        return 10018
+
     current_field = MantisCaseField.query.filter(MantisCaseField.case_field == field.lower()).first()
     field_mapping = current_field.case_field_mapping
     del field_mapping[str(field_id)]
-    MantisCaseField.query.filter(MantisCaseField.case_field == field.lower()).update(field_mapping)
+    MantisCaseField.query.filter(MantisCaseField.case_field == field.lower()).update(
+        {'case_field_mapping': field_mapping}
+    )
     mantis_clear_mapping_rule(field, field_id)
     mantis_db.session.commit()
     mantis_update_field_mapping_rule()
+    return 200
 
 
 def mantis_clear_mapping_rule(field, field_id):
@@ -198,12 +232,15 @@ def mantis_clear_mapping_rule(field, field_id):
     update_list = []
     for mr in mrs:
         mapping_rule = mr.mapping_rule
+        if int(field_id) not in mapping_rule.get(field, []):
+            continue
         mapping_rule[field].remove(int(field_id))
         update_list.append({
             'id': mr.id,
             'mapping_rule': mapping_rule
         })
-    mantis_db.session.bulk_update_mappings(MantisMappingRule, update_list)
+    if update_list:
+        mantis_db.session.bulk_update_mappings(MantisMappingRule, update_list)
 
 
 def mantis_check_field_value_tool(request_params):
@@ -235,3 +272,65 @@ def mantis_check_group_value(field, field_value):
         if _get_group_name(group) == field_value:
             return False
     return True
+
+
+def generate_check_field(field):
+    if field == 'fuLi':
+        return f'{field}_id', f'{field}_id'
+    elif field.endswith('function'):
+        return field, f'{field}_name'
+    else:
+        return f'{field}_name', f'{field}_name'
+
+
+def mantis_check_function_exists_tool(model, key, field, value):
+    filter_list = [getattr(model.get(key), field) == value]
+    if field == 'fuLi_id':
+        filter_list.append(MantisFuLi.delete_flag == 1)
+    count = model.get(key).query.filter(*filter_list).count()
+    return True if count > 0 else False
+
+
+def mantis_check_function_used_tool(field, value):
+    flag = True
+    if field == 'function':
+        count_1 = SubFunction.query.filter(SubFunction.function == value).count()
+        count_2 = TestCase.query.filter(TestCase.function == value).count()
+        if count_1 == 0 and count_2 == 0:
+            flag = False
+    elif field.endswith('sub_function'):
+        count_1 = TestCase.query.filter(TestCase.sub_function == value).count()
+        if count_1 == 0:
+            flag = False
+    elif field.endswith('fuLi_group'):
+        count_1 = MantisFuLi.query.filter(MantisFuLi.fuLi_group_id == value, MantisFuLi.delete_flag == 1).count()
+        if count_1 == 0:
+            flag = False
+    elif field.endswith('fuLi'):
+        count_1 = TestCase.query.filter(TestCase.fuLi_id == value).count()
+        if count_1 == 0:
+            flag = False
+    return flag
+
+
+def mantis_check_field_used_tool(field, field_id):
+    field_dict = {
+        'category': TestCase,
+        'level': TestCase,
+        'available_platform': TestCase,
+        'available_carline': TestCase,
+        'available_variant': TestCase,
+        'available_market': TestCase,
+        'available_language': TestCase,
+        'available_environment': TestCase,
+        'test_result': CaseResult,
+        'tb_type': CaseResult,
+        'test_platform': CaseResult,
+        'test_carline': CaseResult,
+        'test_variant': CaseResult,
+        'test_market': CaseResult,
+        'test_language': CaseResult,
+        'test_environment': CaseResult,
+    }
+    count = field_dict.get(field).query.filter(getattr(field_dict.get(field), field) == field_id).count()
+    return True if count > 0 else False

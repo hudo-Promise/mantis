@@ -33,9 +33,7 @@ parameters:
         due_date:
           type: string
           example: xxxx-xx-xx
-        delete_flag:
-          type: integer
-          example: 0
+
 
 responses:
   200:

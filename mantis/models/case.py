@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 
-from mantis.models import mantis_db
+from mantis.models import mantis_db, DbBase
 
 
-class TestCase(mantis_db.Model):
+class TestCase(DbBase):
     __tablename__ = "test_case"
     id = mantis_db.Column(mantis_db.Integer, primary_key=True, comment='主键')
     creator = mantis_db.Column(mantis_db.Integer, nullable=True, comment='创建人')
@@ -14,7 +14,8 @@ class TestCase(mantis_db.Model):
     fuLi_id = mantis_db.Column(mantis_db.Integer, nullable=False, comment='fuli')
     level = mantis_db.Column(mantis_db.Integer, nullable=True, comment='测试用例等级 -- 有测试结果不可为空 F4/F6/F8')
     cluster = mantis_db.Column(mantis_db.Integer, nullable=False, comment='集群  43/44/45')
-    available_platform = mantis_db.Column(mantis_db.JSON, nullable=True, comment='平台 -- 有测试结果不可为空 PPC/PPE/All')
+    available_platform = mantis_db.Column(mantis_db.JSON, nullable=True,
+                                          comment='平台 -- 有测试结果不可为空 PPC/PPE/All')
     available_carline = mantis_db.Column(mantis_db.JSON, nullable=False, comment='车系')
     available_variant = mantis_db.Column(mantis_db.JSON, nullable=False, comment='车辆规格')
     available_market = mantis_db.Column(mantis_db.JSON, nullable=False, comment='市场 CN/TW/HK/MC/JP/KR')
@@ -57,7 +58,7 @@ class TestCase(mantis_db.Model):
         }
 
 
-class CaseResult(mantis_db.Model):
+class CaseResult(DbBase):
     __tablename__ = 'case_result'
     id = mantis_db.Column(mantis_db.Integer, primary_key=True, comment='主键')
     m_id = mantis_db.Column(mantis_db.Integer, nullable=False, comment='唯一标识符')
@@ -78,6 +79,7 @@ class CaseResult(mantis_db.Model):
     extra_2 = mantis_db.Column(mantis_db.Text, nullable=True, comment='补充数据2')
     extra_3 = mantis_db.Column(mantis_db.Text, nullable=True, comment='补充数据3')
     aug_task_id = mantis_db.Column(mantis_db.Integer, nullable=False, default=0, comment='AutoGo结果唯一ID')
+    cycle_id = mantis_db.Column(mantis_db.Integer, nullable=False, default=0, comment='所属test cycle')
     create_time = mantis_db.Column(mantis_db.DateTime, nullable=True, comment='创建时间')
     upgrade_time = mantis_db.Column(mantis_db.DateTime, nullable=True, comment='更新时间')
 
@@ -128,3 +130,13 @@ class MantisFilterRecord(mantis_db.Model):
     visibility_level = mantis_db.Column(mantis_db.Integer, nullable=False, comment='能见度  0 private 1 public')
     create_time = mantis_db.Column(mantis_db.DateTime, nullable=False, comment='创建时间')
     update_time = mantis_db.Column(mantis_db.DateTime, nullable=True, comment='更新时间')
+
+
+class MantisForKpmMap(DbBase):
+    __tablename__ = 'mantis_for_kpm_map'
+    id = mantis_db.Column(mantis_db.Integer, primary_key=True, comment='主键')
+    project = mantis_db.Column(mantis_db.String(32), nullable=True, comment='项目名称HPC3,MIB3')
+    sub_category = mantis_db.Column(mantis_db.String(1024), nullable=True, comment='Sub_Category')
+    function = mantis_db.Column(mantis_db.Text, nullable=True, comment='Function')
+    feature = mantis_db.Column(mantis_db.Text, nullable=True, comment='Feature')
+    category = mantis_db.Column(mantis_db.Text, nullable=True, comment='Category')

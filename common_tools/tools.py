@@ -1,3 +1,4 @@
+import calendar
 import datetime
 import hashlib
 import time
@@ -14,6 +15,38 @@ from config.basic_setting import redis_config, FORMAT_DATE, FORMAT_DATETIME
 
 def create_current_format_time():
     return time.strftime(FORMAT_DATETIME, time.localtime())
+
+
+def create_offset_format_time(n, target_datetime=None):
+    offset = datetime.timedelta(days=n)
+    if not target_datetime:
+        target_datetime = datetime.datetime.now()
+    else:
+        target_datetime = datetime.datetime.strptime(target_datetime, FORMAT_DATETIME)
+    result = (target_datetime + offset).strftime(FORMAT_DATETIME)
+    return result
+
+
+def get_dates_by_week(year_week_str):
+    year, week = map(int, year_week_str.split('-'))
+    year_start = datetime.datetime(year, 1, 1)
+    first_week_start = year_start - datetime.timedelta(days=year_start.weekday())
+    target_week_start = first_week_start + datetime.timedelta(weeks=week - 1)
+    # dates_in_week = [target_week_start + datetime.timedelta(days=i) for i in range(7)]
+    return target_week_start.strftime('%Y-%m-%d')
+
+
+def get_weeks_around_year():
+    result = []
+    now = datetime.datetime.now()
+    start_date = now - datetime.timedelta(days=365)
+    end_date = now + datetime.timedelta(days=365)
+    while start_date <= end_date:
+        year_week = start_date.isocalendar()
+        week = year_week.week if len(str(year_week.week)) == 2 else f'0{year_week.week}'
+        result.append(f'{year_week.year}-{week}')
+        start_date += datetime.timedelta(days=7)
+    return result
 
 
 def get_gap_days(base_date, cur_date, format=FORMAT_DATETIME, count_type='days'):
@@ -69,6 +102,11 @@ def generate_week(date_str=None):
     d = a.tm_mday
     week_num = datetime.datetime(int(y), int(m), int(d)).isocalendar()[1]  # 一年中的第几周
     return week_num
+
+
+def generate_week_str(date_str=None):
+    week_num = generate_week(date_str)
+    return str(week_num) if len(str(week_num)) == 2 else f'0{week_num}'
 
 
 def generate_year(date_str):
@@ -151,4 +189,19 @@ def update_tool(update_dict, params, update_key, mtc):
 
 
 def calculate_time_to_finish(user_time, percent):
-    return round((user_time / percent) * (1 - percent))
+    return round((1 - percent) * user_time / percent)
+
+
+def get_first_and_last_day(year, month):
+    week_day, month_count_day = calendar.monthrange(year, month)
+    first_day = datetime.date(year, month, day=1)
+    last_day = datetime.date(year, month, day=month_count_day)
+    return first_day.strftime(f"{FORMAT_DATE}"), last_day.strftime(f"{FORMAT_DATE}")
+
+
+def generate_dates(start_date, end_date):
+    start = datetime.datetime.strptime(start_date, FORMAT_DATE)
+    end = datetime.datetime.strptime(end_date, FORMAT_DATE)
+    day = datetime.timedelta(days=1)
+    for i in range((end - start).days + 1):
+        yield start + day * i

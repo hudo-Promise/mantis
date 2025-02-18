@@ -22,24 +22,27 @@ def functions():
 @swag_from('../mantis_swag_yaml/mantis_create_functions.yml')
 @function_blueprint.route('/mantis/create/functions', methods=['POST'])
 def mantis_create_functions():
-    new_id = mantis_create_functions_tool(request.json)
-    resp = response(200, new_id)
+    flag, new_id = mantis_create_functions_tool(request.json)
+    if flag:
+        resp = response(200, new_id)
+    else:
+        resp = response(new_id)
     return jsonify(resp)
 
 
 @swag_from('../mantis_swag_yaml/mantis_edit_functions.yml')
 @function_blueprint.route('/mantis/edit/functions', methods=['POST'])
 def mantis_edit_functions():
-    mantis_edit_functions_tool(request.json)
-    resp = response(200)
+    code = mantis_edit_functions_tool(request.json)
+    resp = response(code)
     return jsonify(resp)
 
 
 @swag_from('../mantis_swag_yaml/mantis_delete_functions.yml')
 @function_blueprint.route('/mantis/delete/functions', methods=['POST'])
 def mantis_delete_functions():
-    mantis_delete_functions_tool(request.json)
-    resp = response(200)
+    code = mantis_delete_functions_tool(request.json)
+    resp = response(code)
     return jsonify(resp)
 
 
@@ -62,8 +65,8 @@ def mantis_edit_field_value():
 @swag_from('../mantis_swag_yaml/mantis_delete_field_value.yml')
 @function_blueprint.route('/mantis/delete/field/value', methods=['POST'])
 def mantis_delete_field_value():
-    mantis_delete_field_value_tool(request.json)
-    resp = response(200)
+    code = mantis_delete_field_value_tool(request.json)
+    resp = response(code)
     return jsonify(resp)
 
 

@@ -1,0 +1,33 @@
+tags:
+  - MANTIS case相关接口
+summary:
+  - MANTIS HCP3 case 同步kpm
+description:
+  MANTIS HCP3 case 同步kpm
+parameters:
+  - name: body
+    in: body
+    required: false
+    schema:
+      id: MANTIS HCP3 case 同步kpm
+      type: object
+      properties:
+responses:
+  200:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 200,
+          msg: Execute succeeded,
+        }
+  10007:
+    in: body
+    required: true
+    schema:
+      example:
+        {
+          code: 10007,
+          msg: The key is incorrect,
+        }

@@ -130,6 +130,8 @@ def activate_case_result(curr):
             `tb_type`,
             `issue_descr`,
             `comments`,
+            `tester`,
+            `cycle_id`,
             `extra_1`,
             `extra_2`,
             `extra_3`,
@@ -165,6 +167,8 @@ def activate_case_result(curr):
             'extra_1': case_result.get('extra_1'),
             'extra_2': case_result.get('extra_2'),
             'extra_3': case_result.get('extra_3'),
+            'tester': case_result.get('tester'),
+            'cycle_id': case_result.get('cycle_id'),
             'create_time': str(case_result.get('create_time')),
             'upgrade_time': str(case_result.get('upgrade_time')),
         }
@@ -397,8 +401,9 @@ def activate_fuli(curr):
     for fu_li in fu_li_results:
         fuli_value2id[fu_li.get('fuLi_id')] = fu_li.get('fuLi_value')
         fuli_id2value[fu_li.get('fuLi_value')] = fu_li.get('fuLi_id')
+        if not fuli_groups.get(fu_li.get('fuLi_group_id')):
+            continue
         fuli_groups[fu_li.get('fuLi_group_id')]['fuLi'][fu_li.get('fuLi_value')] = fu_li
-
     return fuli_value2id, fuli_id2value, fuli_groups
 
 

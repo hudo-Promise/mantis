@@ -1,23 +1,10 @@
 tags:
   - MANTIS Test Milestone 相关接口
 summary:
-  - 查询 Test Milestone test group 图数据
+  - 查询 Test Milestone time table
 description:
-    查询 Test Milestone test group 图数据
+    查询 Test Milestone time table
 
-parameters:
-  - name: linked_milestone
-    in: query
-    type: integer
-    required: true
-  - name: test_scenario
-    in: query
-    type: integer
-    required: true
-  - name: test_group
-    in: query
-    type: integer
-    required: true
 
 responses:
   200:
