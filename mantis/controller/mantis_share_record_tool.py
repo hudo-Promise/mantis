@@ -191,9 +191,9 @@ def query_station_mail_tool(request_params):
             'display_time': display_time
         }
         msm_result.append(current_msm)
-        if msm.status == 1:
+        if int(msm.status) == 1:
             unread += 1
-        elif msm.status == 2:
+        elif int(msm.status) == 2:
             read += 1
     result = {
         'station_mail': msm_result,
