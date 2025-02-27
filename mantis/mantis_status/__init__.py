@@ -216,6 +216,9 @@ user_operate_record_url_list = [
 
 
 field_display_order = {
+    'base': [
+        'cluster'
+    ],
     'case': [
         'category',
         'level',
