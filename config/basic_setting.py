@@ -18,12 +18,7 @@ PASSWORD = 'Auditaee11..2021'
 FORMAT_DATE = '%Y-%m-%d'
 FORMAT_DATETIME = '%Y-%m-%d %H:%M:%S'
 
-HOST_DICT = {
-    'product': '172.16.50.16',
-    'develop': '172.16.50.100',
-    'testing': '172.16.50.100'
-}
-HOST = HOST_DICT.get(SERVICE_MODE)
+HOST = '121.36.4.10'
 
 SECRET_KEY_DICT = {
     'product': 'audi--product--TPmi4aLWRbyVq8zu9v82dWYW1',
@@ -62,9 +57,9 @@ LOGIN_FREE_VERIFICATION = [
 ]
 
 FREE_LOG_API_DICT = {
-    'product': 'http://172.16.50.16:8210/freelog-api/create/log/record',
-    'develop': 'http://172.16.50.100:8200/freelog-dev/create/log/record',
-    'testing': 'http://172.16.50.100:8200/freelog-dev/create/log/record'
+    'product': 'http://121.36.4.10:8210/freelog-api/create/log/record',
+    'develop': 'http://121.36.4.10:8200/freelog-dev/create/log/record',
+    'testing': 'http://121.36.4.10:8200/freelog-dev/create/log/record'
 }
 FREE_LOG_API = FREE_LOG_API_DICT.get(SERVICE_MODE)
 
@@ -80,9 +75,9 @@ NOT_LOG_PATH = [
 ]
 
 KPM_HCP3_PERF_API_DICT = {
-    'product': 'http://172.16.50.3:9528/kpm-api/api/perf/upload/',
-    'develop': 'http://172.16.51.2:8089/kpm-api-test/api/perf/upload/',
-    'testing': 'http://172.16.51.2:8089/kpm-api-test/api/perf/upload/'
+    'product': 'http://121.36.4.10:9528/kpm-api/api/perf/upload/',
+    'develop': 'http://121.36.4.10:8089/kpm-api-test/api/perf/upload/',
+    'testing': 'http://121.36.4.10:8089/kpm-api-test/api/perf/upload/'
 }
 KPM_HCP3_PERF_API = KPM_HCP3_PERF_API_DICT.get(SERVICE_MODE)
 
@@ -148,7 +143,7 @@ AOS_API_DICT = {
     'testing': '/aos-test'
 }
 
-AOS_PREFIX = 'http://172.16.50.11'
+AOS_PREFIX = 'http://121.36.4.10'
 BASE_URL = f'{AOS_PREFIX}:{AOS_SERVICE_PORT_DICT.get(SERVICE_MODE)}{AOS_API_DICT.get(SERVICE_MODE)}/{VERSION}/'
 
 
