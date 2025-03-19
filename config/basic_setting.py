@@ -57,9 +57,9 @@ LOGIN_FREE_VERIFICATION = [
 ]
 
 FREE_LOG_API_DICT = {
-    'product': 'http://121.36.4.10:8210/freelog-api/create/log/record',
-    'develop': 'http://121.36.4.10:8200/freelog-dev/create/log/record',
-    'testing': 'http://121.36.4.10:8200/freelog-dev/create/log/record'
+    'product': f'http://{HOST}:8210/freelog-api/create/log/record',
+    'develop': f'http://{HOST}:8200/freelog-dev/create/log/record',
+    'testing': f'http://{HOST}:8200/freelog-dev/create/log/record'
 }
 FREE_LOG_API = FREE_LOG_API_DICT.get(SERVICE_MODE)
 
@@ -75,9 +75,9 @@ NOT_LOG_PATH = [
 ]
 
 KPM_HCP3_PERF_API_DICT = {
-    'product': 'http://121.36.4.10:9528/kpm-api/api/perf/upload/',
-    'develop': 'http://121.36.4.10:8089/kpm-api-test/api/perf/upload/',
-    'testing': 'http://121.36.4.10:8089/kpm-api-test/api/perf/upload/'
+    'product': f'http://{HOST}:9528/kpm-api/api/perf/upload/',
+    'develop': f'http://{HOST}:8089/kpm-api-test/api/perf/upload/',
+    'testing': f'http://{HOST}:8089/kpm-api-test/api/perf/upload/'
 }
 KPM_HCP3_PERF_API = KPM_HCP3_PERF_API_DICT.get(SERVICE_MODE)
 
