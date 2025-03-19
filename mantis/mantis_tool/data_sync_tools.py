@@ -41,7 +41,14 @@ def get_sync_case_data(test_sw_list=None):
     if test_sw_list:
         case_result_filter_list.append(CaseResult.test_sw.in_(test_sw_list))
     hcp3_case_result_objs = CaseResult.query.filter(*case_result_filter_list).all()
-    return hcp3_case_dict, hcp3_case_result_objs
+    cur_test_sw_list = [i.test_sw for i in hcp3_case_result_objs]
+    if test_sw_list:
+        # 存在指定版本信息但无数据的版本
+        no_result_test_sw = list(set(test_sw_list) - set(cur_test_sw_list))
+    else:
+        no_result_test_sw = []
+
+    return hcp3_case_dict, hcp3_case_result_objs, no_result_test_sw
 
 
 def get_sync_headers():
@@ -50,7 +57,8 @@ def get_sync_headers():
             'Car Model', 'Test time(YY-MM)', 'Car Id', 'SW Version', 'Brand', 'Comment']
 
 
-def get_upload_hcp3_data_dict(hcp3_case_dict, hcp3_case_result_objs, hcp3_config_dict, test_platform_dict,
+def get_upload_hcp3_data_dict(hcp3_case_dict, hcp3_case_result_objs, no_result_test_sw, hcp3_config_dict,
+                              test_platform_dict,
                               test_carline_dict, trans_headers):
     """获取hcp3上传数据结果"""
     trans_result = dict()
@@ -73,7 +81,7 @@ def get_upload_hcp3_data_dict(hcp3_case_dict, hcp3_case_result_objs, hcp3_config
         if hcp3_case_result_obj.test_result == 3:
             time = 'TB'
         else:
-            time = str(hcp3_case_result_obj.extra_1).replace('ms','')
+            time = str(hcp3_case_result_obj.extra_1).replace('ms', '')
         car_model = test_platform_dict.get(str(hcp3_case_result_obj.test_platform))
         test_time = datetime.strftime(hcp3_case_result_obj.create_time, "%Y/%m/%d")
         car_id = test_carline_dict.get(str(hcp3_case_result_obj.test_carline))
@@ -83,6 +91,9 @@ def get_upload_hcp3_data_dict(hcp3_case_dict, hcp3_case_result_objs, hcp3_config
         trans_result.setdefault(sw_version, [trans_headers]).append(
             [function, feature, sub_category, category, level, expectation_time, time, car_model, test_time, car_id,
              sw_version, brand, comment])
+    for sw_version in no_result_test_sw:
+        trans_result.setdefault(sw_version, [trans_headers])
+
     return trans_result
 
 
@@ -139,10 +150,11 @@ def run_sync_mantis_hcp3_data_to_kpm(test_sw_list=None):
         # 读取配置
         hcp3_config_dict, test_platform_dict, test_carline_dict = get_config_for_hcp3()
         # 获取传输数据
-        hcp3_case_dict, hcp3_case_result_objs = get_sync_case_data(test_sw_list)
+        hcp3_case_dict, hcp3_case_result_objs, no_result_test_sw = get_sync_case_data(test_sw_list)
         trans_headers = get_sync_headers()
         # 生成传输数据结构
-        trans_result = get_upload_hcp3_data_dict(hcp3_case_dict, hcp3_case_result_objs, hcp3_config_dict,
+        trans_result = get_upload_hcp3_data_dict(hcp3_case_dict, hcp3_case_result_objs, no_result_test_sw,
+                                                 hcp3_config_dict,
                                                  test_platform_dict,
                                                  test_carline_dict, trans_headers)
 
