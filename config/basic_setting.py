@@ -3,7 +3,7 @@ import logging
 from config.rs_256_keys import RS_256_PUBLIC_KEY_DICT
 import os
 
-SERVICE_IP = '127.0.0.1'
+SERVICE_IP = '172.16.101.34'
 LINK_URL = 'https://www.op-oneplatform.com'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIR_PATH = os.path.join(BASE_DIR, 'download_file')
@@ -18,7 +18,7 @@ PASSWORD = 'Auditaee11..2021'
 FORMAT_DATE = '%Y-%m-%d'
 FORMAT_DATETIME = '%Y-%m-%d %H:%M:%S'
 
-HOST = '121.36.4.10'
+HOST = '172.16.101.34'
 
 SECRET_KEY_DICT = {
     'product': 'audi--product--TPmi4aLWRbyVq8zu9v82dWYW1',
@@ -143,7 +143,7 @@ AOS_API_DICT = {
     'testing': '/aos-test'
 }
 
-AOS_PREFIX = 'http://121.36.4.10'
+AOS_PREFIX = 'http://172.16.101.34'
 BASE_URL = f'{AOS_PREFIX}:{AOS_SERVICE_PORT_DICT.get(SERVICE_MODE)}{AOS_API_DICT.get(SERVICE_MODE)}/{VERSION}/'
 
 
