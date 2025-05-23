@@ -35,10 +35,10 @@ def create_database_cnf(mode):
         'bmt_test': 'bmt_db_test',
     }
     database_cnf = {
-        'host': '172.16.50.100',
+        'host': 'xxx',
         'port': 3306,
         'user': 'root',
-        'password': 'Auditaee11..2021',
+        'password': 'xxx',
         'db': db.get(mode),
         'charset': 'utf8mb4'
     }

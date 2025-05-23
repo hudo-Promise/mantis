@@ -9,7 +9,7 @@ mantis_api_dict = {
 }
 
 MANTIS_API = mantis_api_dict.get(SERVICE_MODE)
-MANTIS_SECRET_KEY = "audi-mantis-TPmi4aLWRbyVq8zu9v82dWYW1"
+MANTIS_SECRET_KEY = "xxx"
 GLOBAL_KEY_D = '88815'
 
 

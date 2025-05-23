@@ -3,7 +3,7 @@ import logging
 from config.rs_256_keys import RS_256_PUBLIC_KEY_DICT
 import os
 
-SERVICE_IP = '172.16.101.34'
+SERVICE_IP = 'xxx'
 LINK_URL = 'https://www.op-oneplatform.com'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIR_PATH = os.path.join(BASE_DIR, 'download_file')
@@ -14,11 +14,11 @@ TIMEOUT = 48 * 3600
 TOKEN_EXP = 12 * 3600
 TOKEN_NAME = 'token'
 TOKEN_MD5 = f'{TOKEN_NAME}_md5'
-PASSWORD = 'Auditaee11..2021'
+PASSWORD = 'xxx'
 FORMAT_DATE = '%Y-%m-%d'
 FORMAT_DATETIME = '%Y-%m-%d %H:%M:%S'
 
-HOST = '172.16.101.34'
+HOST = 'xxx'
 
 SECRET_KEY_DICT = {
     'product': 'audi--product--TPmi4aLWRbyVq8zu9v82dWYW1',
@@ -143,12 +143,12 @@ AOS_API_DICT = {
     'testing': '/aos-test'
 }
 
-AOS_PREFIX = 'http://172.16.101.34'
+AOS_PREFIX = 'xxx'
 BASE_URL = f'{AOS_PREFIX}:{AOS_SERVICE_PORT_DICT.get(SERVICE_MODE)}{AOS_API_DICT.get(SERVICE_MODE)}/{VERSION}/'
 
 
 class BaseConfig(object):
-    SECRET_KEY = "TPmi4aLWRbyVq8zu9v82dWYW1"
+    SECRET_KEY = "xxx"
     # 动态追踪修改设置，如未设置只会提示警告
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # 查询时会显示原始SQL语句
